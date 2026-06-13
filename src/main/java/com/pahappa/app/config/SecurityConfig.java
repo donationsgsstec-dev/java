@@ -5,6 +5,7 @@ import jakarta.servlet.DispatcherType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -70,21 +71,100 @@ public class SecurityConfig {
     }
 
     /**
-     * Configure the SecurityFilterChain.
-     * 
-     * This method defines:
-     * 1. Which URLs require authentication
-     * 2. Which URLs are publicly accessible
-     * 3. Login page configuration
-     * 4. Logout behavior
-     * 5. CSRF protection settings
-     * 
+     * Admin SecurityFilterChain — evaluated first (Order 1).
+     *
+     * Handles all requests under /admin/**:
+     * - Uses /admin/login as its own login page.
+     * - On success, verifies the ADMIN authority and redirects to the admin
+     *   dashboard; non-admin credentials are rejected back to /admin/login.
+     * - Shares the same logout, CSRF, and session settings as the main chain.
+     *
      * @param http HttpSecurity object to configure
-     * @return Configured SecurityFilterChain
+     * @return Configured SecurityFilterChain for admin paths
      * @throws Exception if configuration fails
      */
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    @Order(1)
+    public SecurityFilterChain adminSecurityFilterChain(HttpSecurity http) throws Exception {
+        http
+            // This chain handles both /admin/** and /attendance/admin/** requests
+            .securityMatcher("/admin/**", "/attendance/admin", "/attendance/admin/**")
+
+            // URL authorization for admin paths
+            .authorizeHttpRequests(authorize -> authorize
+                .requestMatchers("/admin/login").permitAll()   // Admin login page is public
+                .dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.ERROR).permitAll()
+                .anyRequest().hasAuthority("ADMIN")            // Everything else requires ADMIN
+            )
+
+            // Redirect unauthenticated requests to the admin login page (not the default /login)
+            .exceptionHandling(ex -> ex
+                .authenticationEntryPoint((request, response, authException) ->
+                    response.sendRedirect(request.getContextPath() + "/admin/login")
+                )
+            )
+
+            // Admin login form
+            .formLogin(form -> form
+                .loginPage("/admin/login")              // Admin login page URL
+                .loginProcessingUrl("/admin/login")     // POST target for the admin login form
+                .successHandler((request, response, authentication) -> {
+                    // Verify the authenticated user actually has the ADMIN role.
+                    // This prevents a regular user who knows the admin URL from logging in.
+                    boolean isAdmin = authentication.getAuthorities().stream()
+                            .anyMatch(auth -> auth.getAuthority().equals("ADMIN"));
+
+                    if (isAdmin) {
+                        response.sendRedirect(request.getContextPath() + "/attendance/admin");
+                    } else {
+                        // Authenticated but not an admin — boot them back with an error
+                        response.sendRedirect(request.getContextPath() + "/admin/login?error=true");
+                    }
+                })
+                .failureUrl("/admin/login?error=true")  // Redirect on bad credentials
+                .usernameParameter("username")
+                .passwordParameter("password")
+                .permitAll()
+            )
+
+            // Logout — mirrors the main chain
+            .logout(logout -> logout
+                .logoutUrl("/logout")
+                .logoutSuccessHandler(logoutSuccessHandler)
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID")
+                .clearAuthentication(true)
+                .permitAll()
+            )
+
+            // CSRF — same exclusions as main chain
+            .csrf(csrf -> csrf
+                .ignoringRequestMatchers("/h2-console/**", "/attendance/qr/**")
+            )
+            // Session management
+            .sessionManagement(session -> session
+                .maximumSessions(1)
+                .maxSessionsPreventsLogin(false)
+            );
+
+        return http.build();
+    }
+
+    /**
+     * Default SecurityFilterChain — evaluated second (Order 2).
+     *
+     * Handles all non-admin requests:
+     * - Uses /login as the login page.
+     * - On success delegates to CustomAuthenticationSuccessHandler which sends
+     *   a login-notification email and redirects to /home.
+     *
+     * @param http HttpSecurity object to configure
+     * @return Configured SecurityFilterChain for general paths
+     * @throws Exception if configuration fails
+     */
+    @Bean
+    @Order(2)
+    public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         http
             // Configure URL authorization
             .authorizeHttpRequests(authorize -> authorize
@@ -103,13 +183,11 @@ public class SecurityConfig {
                     "/attendance",
                     "/attendance/sign-in",
                     "/attendance/sign-out",
-                    "/attendance/history"
+                    "/attendance/history",
+                    "/attendance/qr/**",
+                    "/attendance/statistics",
+                    "/attendance/calendar"
                 ).authenticated()
-                // Admin-only attendance endpoints
-                .requestMatchers(
-                    "/attendance/admin",
-                    "/attendance/admin/**"
-                ).hasAuthority("ADMIN")
                 // Disable security for JSP forwards (internal forwards should not be secured)
                 .dispatcherTypeMatchers(
                     DispatcherType.FORWARD,
@@ -118,41 +196,40 @@ public class SecurityConfig {
                 // All other URLs require authentication
                 .anyRequest().authenticated()
             )
-            
+
             // Configure form-based login with custom success handler
             .formLogin(form -> form
-                .loginPage("/login")                    // Custom login page URL
-                .loginProcessingUrl("/login")           // URL to submit login form (POST)
-                .successHandler(authenticationSuccessHandler)  // Custom handler sends email notification
-                .failureUrl("/login?error=true")        // Redirect after failed login with error parameter
-                .usernameParameter("username")          // Form field name for username
-                .passwordParameter("password")          // Form field name for password
-                .permitAll()                            // Allow everyone to access login page
+                .loginPage("/login")                               // Custom login page URL
+                .loginProcessingUrl("/login")                      // URL to submit login form (POST)
+                .successHandler(authenticationSuccessHandler)      // Sends email notification + redirects /home
+                .failureUrl("/login?error=true")                   // Redirect after failed login
+                .usernameParameter("username")
+                .passwordParameter("password")
+                .permitAll()
             )
-            
+
             // Configure logout with custom success handler
             .logout(logout -> logout
-                .logoutUrl("/logout")                   // URL to trigger logout (POST request)
-                .logoutSuccessHandler(logoutSuccessHandler)  // Custom handler sends email notification
-                .invalidateHttpSession(true)            // Invalidate HTTP session on logout
-                .deleteCookies("JSESSIONID")            // Delete session cookie
-                .clearAuthentication(true)              // Clear authentication
-                .permitAll()                            // Allow everyone to logout
+                .logoutUrl("/logout")
+                .logoutSuccessHandler(logoutSuccessHandler)        // Sends email notification on logout
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID")
+                .clearAuthentication(true)
+                .permitAll()
             )
-            
+
             // Configure CSRF protection
             .csrf(csrf -> csrf
-                // Disable CSRF for H2 console (development only)
-                // CSRF is enabled for all other endpoints including login, logout, and registration
-                .ignoringRequestMatchers("/h2-console/**")
+                // Disable CSRF for H2 console and QR endpoints (development only)
+                .ignoringRequestMatchers("/h2-console/**", "/attendance/qr/**")
             )
-            
+
             // Configure session management
             .sessionManagement(session -> session
                 .maximumSessions(1)                     // Allow only one session per user
                 .maxSessionsPreventsLogin(false)        // New login invalidates old session
             )
-            
+
             // Allow frames for H2 console (development only)
             .headers(headers -> headers
                 .frameOptions(frameOptions -> frameOptions.sameOrigin())

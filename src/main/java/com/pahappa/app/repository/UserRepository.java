@@ -4,6 +4,7 @@ import com.pahappa.app.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -69,6 +70,16 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * @return true if a user with this email exists, false otherwise
      */
     boolean existsByEmail(String email);
+
+    /**
+     * Find all users with a specific role.
+     *
+     * @param role the role to filter by
+     * @return list of matching users
+     */
+    List<User> findByRole(User.UserRole role);
 }
+
+// Made with Bob
 
 // Made with Bob

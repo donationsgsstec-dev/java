@@ -83,6 +83,11 @@ public class CustomLogoutSuccessHandler implements LogoutSuccessHandler {
                 if (userOptional.isPresent()) {
                     var user = userOptional.get();
                     emailService.sendLogoutNotification(user.getEmail(), username);
+                    
+                    // If user is an admin, notify other admins
+                    if (user.getRole() == com.pahappa.app.entity.User.UserRole.ADMIN) {
+                        emailService.sendAdminLogoutNotification(user.getEmail(), username);
+                    }
                 }
             } catch (Exception e) {
                 // Log error but don't fail the logout

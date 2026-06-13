@@ -38,20 +38,28 @@ public class UserServiceImpl implements UserService {
      * Password encoder for hashing passwords (BCrypt)
      */
     private final PasswordEncoder passwordEncoder;
+    
+    /**
+     * Email service for sending notifications
+     */
+    private final com.pahappa.app.service.EmailService emailService;
 
     /**
      * Constructor-based dependency injection.
-     * 
+     *
      * Spring automatically injects UserRepository and PasswordEncoder beans.
      * Constructor injection is preferred over field injection for better testability.
-     * 
+     *
      * @param userRepository Repository for user data access
      * @param passwordEncoder Encoder for password hashing
+     * @param emailService Service for sending email notifications
      */
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder,
+                          com.pahappa.app.service.EmailService emailService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.emailService = emailService;
     }
 
     /**
@@ -158,6 +166,78 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     public boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
+    }
+
+    /**
+     * Change password — verifies current password then saves new BCrypt hash.
+     */
+    @Override
+    public void changePassword(String username, String currentPassword, String newPassword) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found: " + username));
+
+        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+            throw new RuntimeException("Current password is incorrect.");
+        }
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+    }
+
+    /**
+     * Promote a user to ADMIN role.
+     */
+    @Override
+    public void promoteToAdmin(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+        user.setRole(User.UserRole.ADMIN);
+        userRepository.save(user);
+        
+        // Send promotion notification email
+        try {
+            emailService.sendRolePromotionNotification(user.getEmail(), user.getUsername(), "ADMIN");
+            System.out.println("Promotion notification sent to: " + user.getEmail());
+        } catch (Exception e) {
+            System.err.println("Failed to send promotion notification: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Demote a user back to INTERN role.
+     */
+    @Override
+    public void demoteToIntern(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+        user.setRole(User.UserRole.INTERN);
+        userRepository.save(user);
+        
+        // Send demotion notification email
+        try {
+            emailService.sendRoleDemotionNotification(user.getEmail(), user.getUsername(), "INTERN");
+            System.out.println("Demotion notification sent to: " + user.getEmail());
+        } catch (Exception e) {
+            System.err.println("Failed to send demotion notification: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Return all interns.
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public List<User> findAllInterns() {
+        return userRepository.findByRole(User.UserRole.INTERN);
+    }
+
+    /**
+     * Return all admins.
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public List<User> findAllAdmins() {
+        return userRepository.findByRole(User.UserRole.ADMIN);
     }
 }
 

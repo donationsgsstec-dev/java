@@ -59,6 +59,51 @@ public interface EmailService {
      * @return true if email was sent successfully, false otherwise
      */
     boolean sendAttendanceSignOutNotification(String toEmail, String username, String signInTime, String signOutTime, String duration);
-}
+    
+    /**
+     * Send role promotion notification email to the user.
+     *
+     * @param toEmail The recipient's email address
+     * @param username The user's username
+     * @param newRole The new role assigned
+     * @return true if email was sent successfully, false otherwise
+     */
+    boolean sendRolePromotionNotification(String toEmail, String username, String newRole);
+    
+    /**
+     * Send role demotion notification email to the user.
+     *
+     * @param toEmail The recipient's email address
+     * @param username The user's username
+     * @param newRole The new role assigned
+     * @return true if email was sent successfully, false otherwise
+     */
+    boolean sendRoleDemotionNotification(String toEmail, String username, String newRole);
+    
+    /**
+     * Send admin login notification to all admins.
+     *
+     * @param adminEmail The admin's email who logged in
+     * @param adminUsername The admin's username who logged in
+     * @return true if email was sent successfully, false otherwise
+     */
+    boolean sendAdminLoginNotification(String adminEmail, String adminUsername);
+    
+    /**
+     * Send admin logout notification to all admins.
+     *
+     * @param adminEmail The admin's email who logged out
+     * @param adminUsername The admin's username who logged out
+     * @return true if email was sent successfully, false otherwise
+     */
+    boolean sendAdminLogoutNotification(String adminEmail, String adminUsername);
 
-// Made with Bob
+    /**
+     * Notify all interns that the room QR code is now active and ready to scan.
+     *
+     * @param expiresAt  human-readable expiry time shown in the email (e.g. "09:00")
+     * @param label      optional session label set by the admin
+     * @return true if all emails were dispatched successfully
+     */
+    boolean sendRoomQRNotification(String expiresAt, String label);
+}

@@ -88,22 +88,20 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     /**
      * Get authorities (roles) for the user.
-     * 
-     * In this simple implementation, all users have the "ROLE_USER" authority.
-     * In a more complex system, you would retrieve roles from a database table.
-     * 
-     * Spring Security requires role names to be prefixed with "ROLE_".
-     * 
+     *
+     * This method converts the user's role from the database into Spring Security authorities.
+     * The role is returned as-is (ADMIN or INTERN) without the "ROLE_" prefix,
+     * since SecurityConfig uses hasAuthority() which doesn't require the prefix.
+     *
      * @param user The user to get authorities for
-     * @return Collection of granted authorities
+     * @return Collection of granted authorities based on user's role
      */
     private Collection<? extends GrantedAuthority> getAuthorities(User user) {
-        // For this simple application, all users have the USER role
-        // In a production system, you would typically:
-        // 1. Have a Role entity and User-Role relationship
-        // 2. Fetch roles from database
-        // 3. Convert roles to GrantedAuthority objects
-        return Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
+        // Return the user's actual role from the database (ADMIN or INTERN)
+        // No "ROLE_" prefix needed when using hasAuthority() in SecurityConfig
+        return Collections.singletonList(
+            new SimpleGrantedAuthority(user.getRole().name())
+        );
     }
 }
 

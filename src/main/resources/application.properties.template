@@ -1,0 +1,174 @@
+# =====================================================
+# SUPER ATTENDANCE SYSTEM - APPLICATION CONFIGURATION
+# =====================================================
+# Copy this file to application.properties and update with your settings
+# =====================================================
+
+# =====================================================
+# SERVER CONFIGURATION
+# =====================================================
+server.port=8080
+server.servlet.context-path=/
+
+# =====================================================
+# DATABASE CONFIGURATION
+# =====================================================
+spring.datasource.url=jdbc:mysql://localhost:3306/userdb?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+spring.datasource.username=root
+spring.datasource.password=YOUR_MYSQL_PASSWORD
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+
+# JPA/Hibernate Configuration
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=false
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL8Dialect
+spring.jpa.properties.hibernate.format_sql=true
+
+# =====================================================
+# JSP CONFIGURATION
+# =====================================================
+spring.mvc.view.prefix=/WEB-INF/views/
+spring.mvc.view.suffix=.jsp
+
+# =====================================================
+# EMAIL CONFIGURATION (Gmail Example)
+# =====================================================
+# Enable/Disable Email Notifications
+spring.mail.enabled=true
+
+# Gmail SMTP Settings
+spring.mail.host=smtp.gmail.com
+spring.mail.port=587
+spring.mail.username=YOUR_EMAIL@gmail.com
+spring.mail.password=YOUR_APP_PASSWORD
+
+# Email Properties
+spring.mail.properties.mail.smtp.auth=true
+spring.mail.properties.mail.smtp.starttls.enable=true
+spring.mail.properties.mail.smtp.starttls.required=true
+spring.mail.properties.mail.smtp.connectiontimeout=5000
+spring.mail.properties.mail.smtp.timeout=5000
+spring.mail.properties.mail.smtp.writetimeout=5000
+
+# Email From Address
+spring.mail.from=noreply@pahappa.com
+
+# =====================================================
+# APPLICATION SETTINGS
+# =====================================================
+app.name=Pahappa Attendance System
+app.version=2.0.0
+app.admin.email=admin@pahappa.com
+
+# =====================================================
+# WORK SCHEDULE DEFAULT SETTINGS
+# =====================================================
+# These are default values, can be overridden via admin panel
+app.work.start-time=09:00
+app.work.end-time=17:00
+app.work.grace-period-minutes=15
+app.work.minimum-hours=8.0
+
+# =====================================================
+# NOTIFICATION SETTINGS
+# =====================================================
+app.notifications.late-arrival.enabled=true
+app.notifications.early-departure.enabled=true
+app.notifications.daily-summary.enabled=false
+app.notifications.weekly-report.enabled=false
+
+# =====================================================
+# QR CODE SETTINGS
+# =====================================================
+app.qrcode.enabled=true
+app.qrcode.expiry-hours=24
+app.qrcode.size=300
+
+# =====================================================
+# SECURITY SETTINGS
+# =====================================================
+# Session timeout (in seconds)
+server.servlet.session.timeout=1800
+
+# Remember me token validity (in seconds)
+spring.security.remember-me.token-validity-seconds=604800
+
+# =====================================================
+# FILE UPLOAD SETTINGS
+# =====================================================
+spring.servlet.multipart.max-file-size=10MB
+spring.servlet.multipart.max-request-size=10MB
+
+# =====================================================
+# LOGGING CONFIGURATION
+# =====================================================
+logging.level.root=INFO
+logging.level.com.pahappa.app=DEBUG
+logging.level.org.springframework.web=INFO
+logging.level.org.springframework.security=INFO
+logging.level.org.hibernate.SQL=DEBUG
+logging.level.org.hibernate.type.descriptor.sql.BasicBinder=TRACE
+
+# Log file configuration
+logging.file.name=logs/attendance-system.log
+logging.file.max-size=10MB
+logging.file.max-history=30
+
+# =====================================================
+# ACTUATOR ENDPOINTS (Optional - for monitoring)
+# =====================================================
+management.endpoints.web.exposure.include=health,info,metrics
+management.endpoint.health.show-details=when-authorized
+
+# =====================================================
+# TIMEZONE CONFIGURATION
+# =====================================================
+spring.jackson.time-zone=Africa/Kampala
+spring.jpa.properties.hibernate.jdbc.time_zone=Africa/Kampala
+
+# =====================================================
+# ASYNC CONFIGURATION
+# =====================================================
+spring.task.execution.pool.core-size=5
+spring.task.execution.pool.max-size=10
+spring.task.execution.pool.queue-capacity=100
+
+# =====================================================
+# THYMELEAF CONFIGURATION (for email templates)
+# =====================================================
+spring.thymeleaf.cache=false
+spring.thymeleaf.enabled=true
+spring.thymeleaf.prefix=classpath:/templates/
+spring.thymeleaf.suffix=.html
+
+# =====================================================
+# DEVELOPMENT SETTINGS (Disable in production)
+# =====================================================
+spring.devtools.restart.enabled=true
+spring.devtools.livereload.enabled=true
+
+# =====================================================
+# PRODUCTION SETTINGS (Uncomment for production)
+# =====================================================
+#spring.jpa.show-sql=false
+#logging.level.com.pahappa.app=INFO
+#spring.devtools.restart.enabled=false
+#spring.devtools.livereload.enabled=false
+
+# =====================================================
+# NOTES
+# =====================================================
+# 1. For Gmail: Enable 2-Factor Authentication and generate App Password
+#    https://myaccount.google.com/apppasswords
+#
+# 2. For other email providers, update SMTP settings accordingly
+#
+# 3. Database password should be kept secure
+#
+# 4. In production, use environment variables for sensitive data
+#
+# 5. Adjust timezone to match your location
+#
+# 6. Enable HTTPS in production for security
+#
+# =====================================================

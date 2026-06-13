@@ -7,7 +7,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Attendance Dashboard</title>
+    <title>Admin - Attendance Report</title>
     <style>
         * {
             margin: 0;
@@ -82,6 +82,11 @@
             flex-wrap: wrap;
         }
 
+        .filter-form label {
+            font-weight: 600;
+            color: #333;
+        }
+
         .filter-form input[type="date"] {
             padding: 10px;
             border: 1px solid #ddd;
@@ -110,9 +115,18 @@
             background-color: #5568d3;
         }
 
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #218838;
+        }
+
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 20px;
             margin-bottom: 30px;
         }
@@ -145,9 +159,17 @@
             margin-bottom: 30px;
         }
 
+        .table-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
         .table-card h2 {
             color: #333;
-            margin-bottom: 20px;
         }
 
         table {
@@ -188,9 +210,11 @@
             color: #333;
         }
 
-        .badge-info {
-            background-color: #17a2b8;
-            color: white;
+        .empty-state {
+            text-align: center;
+            color: #666;
+            padding: 40px 20px;
+            font-size: 15px;
         }
 
         @media (max-width: 768px) {
@@ -215,18 +239,23 @@
             th, td {
                 padding: 8px;
             }
+
+            .table-card-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
+
         <!-- Navigation Bar -->
         <nav class="navbar">
-            <div class="navbar-brand">👥 Admin Dashboard</div>
+            <div class="navbar-brand">📊 Attendance Report</div>
             <div class="navbar-links">
+                <a href="${pageContext.request.contextPath}/attendance/admin">👥 Dashboard</a>
                 <a href="${pageContext.request.contextPath}/attendance/admin/report">📊 Reports</a>
-                <a href="${pageContext.request.contextPath}/attendance/admin/room-qr">📺 Room QR</a>
-                <a href="${pageContext.request.contextPath}/attendance/admin/settings">⚙️ Settings</a>
                 <form action="${pageContext.request.contextPath}/logout" method="post" style="margin: 0;">
                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                     <button type="submit" class="btn" style="padding: 8px 16px; margin: 0; background-color: #e74c3c; color: white;">Logout</button>
@@ -234,87 +263,67 @@
             </div>
         </nav>
 
-        <!-- Header with Date Filter -->
+        <!-- Header with Date Range Filter -->
         <div class="header-card">
-            <h1>Attendance Dashboard</h1>
-            <form action="${pageContext.request.contextPath}/attendance/admin" method="get" class="filter-form">
-                <label for="date">Select Date:</label>
-                <input type="date" id="date" name="date" value="${selectedDate}" required>
-                <button type="submit" class="btn btn-primary">View Attendance</button>
-                <a href="${pageContext.request.contextPath}/attendance/admin" class="btn" style="background-color: #6c757d; color: white;">Today</a>
+            <h1>Attendance Report</h1>
+            <form action="${pageContext.request.contextPath}/attendance/admin/report" method="get" class="filter-form">
+                <label for="startDate">From:</label>
+                <input type="date" id="startDate" name="startDate" value="${startDate}">
+
+                <label for="endDate">To:</label>
+                <input type="date" id="endDate" name="endDate" value="${endDate}">
+
+                <button type="submit" class="btn btn-primary">Filter</button>
+                <a href="${pageContext.request.contextPath}/attendance/admin/report"
+                   class="btn" style="background-color: #6c757d; color: white;">Reset</a>
             </form>
         </div>
 
-        <!-- Statistics -->
+        <!-- Summary Stats -->
         <div class="stats-grid">
             <div class="stat-card">
-                <h3>Total Attendance Today</h3>
-                <div class="stat-value">${totalToday}</div>
+                <h3>Total Records</h3>
+                <div class="stat-value">${totalRecords}</div>
             </div>
             <div class="stat-card">
-                <h3>Currently Signed In</h3>
-                <div class="stat-value" style="color: #28a745;">${currentlySignedInCount}</div>
+                <h3>Date Range</h3>
+                <div class="stat-value" style="font-size: 18px; padding-top: 8px;">${startDate}<br>→ ${endDate}</div>
             </div>
             <div class="stat-card">
-                <h3>Signed Out</h3>
-                <div class="stat-value" style="color: #6c757d;">${totalToday - currentlySignedInCount}</div>
+                <h3>Completed Sessions</h3>
+                <div class="stat-value" style="color: #28a745;">
+                    <c:set var="completedCount" value="0" />
+                    <c:forEach items="${attendanceList}" var="record">
+                        <c:if test="${record.status != 'SIGNED_IN'}">
+                            <c:set var="completedCount" value="${completedCount + 1}" />
+                        </c:if>
+                    </c:forEach>
+                    ${completedCount}
+                </div>
+            </div>
+            <div class="stat-card">
+                <h3>Still Signed In</h3>
+                <div class="stat-value" style="color: #ffc107;">
+                    ${totalRecords - completedCount}
+                </div>
             </div>
         </div>
 
-        <!-- Currently Signed In Users -->
+        <!-- Records Table -->
         <div class="table-card">
-            <h2>Currently Signed In (${currentlySignedInCount})</h2>
-            <c:choose>
-                <c:when test="${not empty currentlySignedIn}">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Student Name</th>
-                                <th>Username</th>
-                                <th>Email</th>
-                                <th>Sign In Time</th>
-                                <th>Duration</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <c:forEach items="${currentlySignedIn}" var="record">
-                                <tr>
-                                    <td>${record.user.fullName}</td>
-                                    <td>${record.user.username}</td>
-                                    <td>${record.user.email}</td>
-                                    <td>${record.signInTime.format(DateTimeFormatter.ofPattern("HH:mm:ss"))}</td>
-                                    <td>
-                                        <%
-                                            com.pahappa.app.entity.Attendance rec = (com.pahappa.app.entity.Attendance) pageContext.getAttribute("record");
-                                            java.time.Duration dur = java.time.Duration.between(rec.getSignInTime(), java.time.LocalDateTime.now());
-                                            pageContext.setAttribute("hours", dur.toHours());
-                                            pageContext.setAttribute("minutes", dur.toMinutes() % 60);
-                                        %>
-                                        ${hours}h ${minutes}m
-                                    </td>
-                                    <td><span class="badge badge-warning">Signed In</span></td>
-                                </tr>
-                            </c:forEach>
-                        </tbody>
-                    </table>
-                </c:when>
-                <c:otherwise>
-                    <p style="text-align: center; color: #666; padding: 20px;">
-                        No students are currently signed in.
-                    </p>
-                </c:otherwise>
-            </c:choose>
-        </div>
+            <div class="table-card-header">
+                <h2>All Records (${startDate} to ${endDate})</h2>
+                <!-- Export link — reuses the existing Excel export endpoint -->
+                <a href="${pageContext.request.contextPath}/attendance/export?startDate=${startDate}&endDate=${endDate}"
+                   class="btn btn-success">⬇ Export to Excel</a>
+            </div>
 
-        <!-- All Attendance Records for Selected Date -->
-        <div class="table-card">
-            <h2>All Attendance Records - ${selectedDate}</h2>
             <c:choose>
                 <c:when test="${not empty attendanceList}">
                     <table>
                         <thead>
                             <tr>
+                                <th>Date</th>
                                 <th>Student Name</th>
                                 <th>Username</th>
                                 <th>Email</th>
@@ -327,6 +336,7 @@
                         <tbody>
                             <c:forEach items="${attendanceList}" var="record">
                                 <tr>
+                                    <td>${record.attendanceDate.format(DateTimeFormatter.ofPattern("MMM dd, yyyy"))}</td>
                                     <td>${record.user.fullName}</td>
                                     <td>${record.user.username}</td>
                                     <td>${record.user.email}</td>
@@ -336,7 +346,7 @@
                                             <c:when test="${not empty record.signOutTime}">
                                                 ${record.signOutTime.format(DateTimeFormatter.ofPattern("HH:mm:ss"))}
                                             </c:when>
-                                            <c:otherwise>-</c:otherwise>
+                                            <c:otherwise>—</c:otherwise>
                                         </c:choose>
                                     </td>
                                     <td>${record.formattedDuration}</td>
@@ -356,12 +366,11 @@
                     </table>
                 </c:when>
                 <c:otherwise>
-                    <p style="text-align: center; color: #666; padding: 20px;">
-                        No attendance records found for this date.
-                    </p>
+                    <p class="empty-state">No attendance records found for the selected date range.</p>
                 </c:otherwise>
             </c:choose>
         </div>
+
     </div>
 </body>
 </html>

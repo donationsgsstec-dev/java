@@ -75,11 +75,62 @@ public class Attendance {
     private LocalDateTime updatedAt;
 
     /**
+     * Whether the check-in was late
+     */
+    @Column(name = "is_late", nullable = false)
+    private boolean isLate = false;
+
+    /**
+     * Minutes late (if applicable)
+     */
+    @Column(name = "late_minutes")
+    private Integer lateMinutes;
+
+    /**
+     * Whether the check-out was early
+     */
+    @Column(name = "is_early_departure", nullable = false)
+    private boolean isEarlyDeparture = false;
+
+    /**
+     * Minutes early departure (if applicable)
+     */
+    @Column(name = "early_departure_minutes")
+    private Integer earlyDepartureMinutes;
+
+    /**
+     * Overtime hours worked
+     */
+    @Column(name = "overtime_minutes")
+    private Integer overtimeMinutes;
+
+    /**
+     * Location of check-in (optional)
+     */
+    @Column(name = "check_in_location", length = 200)
+    private String checkInLocation;
+
+    /**
+     * Location of check-out (optional)
+     */
+    @Column(name = "check_out_location", length = 200)
+    private String checkOutLocation;
+
+    /**
+     * QR code used for check-in
+     */
+    @Column(name = "qr_code_used")
+    private boolean qrCodeUsed = false;
+
+    /**
      * Attendance status enum
      */
     public enum AttendanceStatus {
         SIGNED_IN,
-        SIGNED_OUT
+        SIGNED_OUT,
+        ABSENT,
+        LATE,
+        ON_LEAVE
     }
 
     /**
@@ -213,6 +264,102 @@ public class Attendance {
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
+    
+    public boolean isLate() {
+        return isLate;
+    }
+
+    public void setLate(boolean late) {
+        isLate = late;
+    }
+
+    public Integer getLateMinutes() {
+        return lateMinutes;
+    }
+
+    public void setLateMinutes(Integer lateMinutes) {
+        this.lateMinutes = lateMinutes;
+    }
+
+    public boolean isEarlyDeparture() {
+        return isEarlyDeparture;
+    }
+
+    public void setEarlyDeparture(boolean earlyDeparture) {
+        isEarlyDeparture = earlyDeparture;
+    }
+
+    public Integer getEarlyDepartureMinutes() {
+        return earlyDepartureMinutes;
+    }
+
+    public void setEarlyDepartureMinutes(Integer earlyDepartureMinutes) {
+        this.earlyDepartureMinutes = earlyDepartureMinutes;
+    }
+
+    public Integer getOvertimeMinutes() {
+        return overtimeMinutes;
+    }
+
+    public void setOvertimeMinutes(Integer overtimeMinutes) {
+        this.overtimeMinutes = overtimeMinutes;
+    }
+
+    public String getCheckInLocation() {
+        return checkInLocation;
+    }
+
+    public void setCheckInLocation(String checkInLocation) {
+        this.checkInLocation = checkInLocation;
+    }
+
+    public String getCheckOutLocation() {
+        return checkOutLocation;
+    }
+
+    public void setCheckOutLocation(String checkOutLocation) {
+        this.checkOutLocation = checkOutLocation;
+    }
+
+    public boolean isQrCodeUsed() {
+        return qrCodeUsed;
+    }
+
+    public void setQrCodeUsed(boolean qrCodeUsed) {
+        this.qrCodeUsed = qrCodeUsed;
+    }
+
+    /**
+     * Get formatted late time
+     * @return Formatted late time or empty string
+     */
+    public String getFormattedLateTime() {
+        if (lateMinutes == null || lateMinutes == 0) {
+            return "";
+        }
+        long hours = lateMinutes / 60;
+        long minutes = lateMinutes % 60;
+        if (hours > 0) {
+            return String.format("%dh %dm late", hours, minutes);
+        }
+        return String.format("%dm late", minutes);
+    }
+
+    /**
+     * Get formatted overtime
+     * @return Formatted overtime or empty string
+     */
+    public String getFormattedOvertime() {
+        if (overtimeMinutes == null || overtimeMinutes == 0) {
+            return "";
+        }
+        long hours = overtimeMinutes / 60;
+        long minutes = overtimeMinutes % 60;
+        if (hours > 0) {
+            return String.format("%dh %dm overtime", hours, minutes);
+        }
+        return String.format("%dm overtime", minutes);
+    }
 
     @Override
     public String toString() {
@@ -226,5 +373,3 @@ public class Attendance {
                 '}';
     }
 }
-
-// Made with Bob

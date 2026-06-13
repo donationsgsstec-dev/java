@@ -112,6 +112,98 @@ public interface AttendanceService {
      * @param user The user
      * @return true if user has signed in today
      */
+    /**
+     * Sign in a user using QR code
+     * @param qrCodeData QR code data
+     * @return The created attendance record
+     * @throws IllegalStateException if user is already signed in or QR code is invalid
+     */
+    Attendance signInWithQRCode(String qrCodeData);
+
+    /**
+     * Sign out a user using QR code
+     * @param qrCodeData QR code data
+     * @return The updated attendance record
+     * @throws IllegalStateException if user is not signed in or QR code is invalid
+     */
+    Attendance signOutWithQRCode(String qrCodeData);
+
+    /**
+     * Get attendance statistics for a user
+     * @param user The user
+     * @return AttendanceStatistics object
+     */
+    com.pahappa.app.dto.AttendanceStatistics getUserStatistics(User user);
+
+    /**
+     * Get attendance calendar data for a month
+     * @param user The user
+     * @param year Year
+     * @param month Month (1-12)
+     * @return Map of date to attendance status
+     */
+    java.util.Map<LocalDate, String> getMonthlyCalendar(User user, int year, int month);
+
+    /**
+     * Get late arrivals count for a user
+     * @param user The user
+     * @param startDate Start date
+     * @param endDate End date
+     * @return Count of late arrivals
+     */
+    long getLateArrivalsCount(User user, LocalDate startDate, LocalDate endDate);
+
+    /**
+     * Get early departures count for a user
+     * @param user The user
+     * @param startDate Start date
+     * @param endDate End date
+     * @return Count of early departures
+     */
+    long getEarlyDeparturesCount(User user, LocalDate startDate, LocalDate endDate);
+
+    /**
+     * Calculate total hours worked
+     * @param user The user
+     * @param startDate Start date
+     * @param endDate End date
+     * @return Total hours worked
+     */
+    double getTotalHoursWorked(User user, LocalDate startDate, LocalDate endDate);
+
+    /**
+     * Calculate overtime hours
+     * @param user The user
+     * @param startDate Start date
+     * @param endDate End date
+     * @return Total overtime hours
+     */
+    double getOvertimeHours(User user, LocalDate startDate, LocalDate endDate);
+
+    /**
+     * Get attendance rate percentage
+     * @param user The user
+     * @param startDate Start date
+     * @param endDate End date
+     * @return Attendance rate (0-100)
+     */
+    double getAttendanceRate(User user, LocalDate startDate, LocalDate endDate);
+
+    /**
+     * Export attendance to Excel
+     * @param attendanceList List of attendance records
+     * @param title Report title
+     * @return Excel file as byte array
+     */
+    byte[] exportToExcel(List<Attendance> attendanceList, String title) throws java.io.IOException;
+
+    /**
+     * Export user attendance to Excel
+     * @param user The user
+     * @return Excel file as byte array
+     */
+    byte[] exportUserAttendanceToExcel(User user) throws java.io.IOException;
+
     boolean hasSignedInToday(User user);
 }
 

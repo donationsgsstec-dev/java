@@ -1,24 +1,38 @@
 # Spring Boot User Authentication & Attendance System
 
-A complete Spring Boot 3.3+ application demonstrating user registration, login functionality, attendance tracking, and email notifications with Spring Security, JPA/Hibernate, and JSP views.
+A complete Spring Boot 3.3+ application demonstrating user registration, login functionality, attendance tracking, and email notifications with Spring Security, JPA/Hibernate, and JSP views.  Java Persistence API (Now officially known as Jakarta Persistence) and JavaServer Pages (Now officially known as Jakarta Server Pages)
 
 ## 🚀 Features
 
+### Core Features
 - **User Registration**: Complete registration form with validation
 - **User Login**: Secure form-based authentication
 - **Attendance Tracking**: Sign-in/sign-out system with history
 - **Email Notifications**: Automated emails via QSSN API
 - **Admin Panel**: View all users' attendance records
 - **Spring Security**: BCrypt password encoding and custom UserDetailsService
-- **JPA/Hibernate**: Database operations with H2 in-memory database
+- **JPA/Hibernate**: Database operations with MySQL database
 - **JSP Views**: Server-side rendering with JSTL tags
 - **Validation**: Form validation with error messages
 - **Responsive Design**: Mobile-friendly UI
+
+### Advanced QR Code Features
+- **QR Code Expiration**: QR codes automatically expire after 10 minutes
+- **Single-Use Validation**: Each QR code can only be used once
+- **Rate Limiting**: Users can generate maximum 2 QR codes per minute
+- **Encrypted QR Data**: AES encryption for secure QR code data
+- **Once-Per-Day Check-In**: Users can only check in once per 24-hour period
+
+### Real-Time Features
+- **Live Weekly Overview**: Attendance dashboard updates every 30 seconds
+- **REST API**: JSON endpoints for real-time attendance data
+- **Auto-Refresh Charts**: Weekly attendance chart with live database sync
 
 ## 📋 Prerequisites
 
 - Java 17 or higher
 - Maven 3.6 or higher (included in project: `apache-maven-3.9.16`)
+- MySQL Server 8.0 or higher (running on localhost:3306)
 - IDE (IntelliJ IDEA, Eclipse, or VS Code)
 
 ## 🛠️ Technology Stack
@@ -26,7 +40,7 @@ A complete Spring Boot 3.3+ application demonstrating user registration, login f
 - **Spring Boot**: 3.3.0
 - **Spring Security**: 6.x
 - **Spring Data JPA**: Database operations
-- **H2 Database**: In-memory database
+- **MySQL Database**: Production-ready relational database
 - **JSP & JSTL**: View layer
 - **Maven**: Build tool
 - **BCrypt**: Password encryption
@@ -85,7 +99,27 @@ user-auth-app/
 
 ## 🚦 Getting Started
 
-### Step 1: Compile the Project
+### Step 1: Setup MySQL Database
+
+**The application automatically creates the database on startup!** You only need to:
+
+1. **Install MySQL Server** (if not already installed)
+   - Download from: https://dev.mysql.com/downloads/mysql/
+   - Ensure MySQL is running on `localhost:3306`
+
+2. **Configure Database Credentials** (if needed)
+   
+   Edit [`src/main/resources/application.properties`](src/main/resources/application.properties):
+   ```properties
+   spring.datasource.username=root
+   spring.datasource.password=your_password_here
+   ```
+
+3. **That's it!** The database `userdb` will be created automatically when you run the application.
+
+📖 **For detailed MySQL setup instructions, see [MYSQL_SETUP.md](MYSQL_SETUP.md)**
+
+### Step 2: Compile the Project
 
 Open terminal in the project directory and run:
 
@@ -98,7 +132,7 @@ This will:
 - Download dependencies
 - Compile the Java source code
 
-### Step 2: Run the Application
+### Step 3: Run the Application
 
 ```bash
 .\apache-maven-3.9.16\bin\mvn.cmd spring-boot:run
@@ -111,25 +145,25 @@ Started UserAuthApplication in X.XXX seconds
 
 The application will be available at: **http://localhost:8080**
 
-### Step 3: Access the Application
+### Step 4: Access the Application
 
 Open your browser and navigate to:
 - **Registration**: http://localhost:8080/register
 - **Login**: http://localhost:8080/login
 - **Home**: http://localhost:8080/home (requires login)
 - **Attendance**: http://localhost:8080/attendance (requires login)
-- **H2 Console**: http://localhost:8080/h2-console
+## 🗄️ Database Management
 
-## 🔐 H2 Database Console
+The application uses **MySQL** database with automatic schema creation.
 
-To access the H2 database console for debugging and viewing data:
+### Accessing MySQL Database
 
-1. **Navigate to**: http://localhost:8080/h2-console
-2. **Enter connection details**:
-   - **JDBC URL**: `jdbc:h2:mem:userdb`
-   - **Username**: `sa`
-   - **Password**: (leave empty)
-3. **Click "Connect"**
+Use MySQL Workbench, command line, or any MySQL client:
+
+```bash
+mysql -u root -p
+USE userdb;
+```
 
 ### Useful SQL Queries:
 
@@ -144,8 +178,24 @@ SELECT * FROM attendance;
 UPDATE users SET role = 'ADMIN' WHERE username = 'your_username';
 
 -- Check user roles
-SELECT username, email, role, enabled FROM users;
+SELECT username, email, role FROM users;
+
+-- View attendance with user details
+SELECT u.username, a.date, a.check_in_time, a.check_out_time, a.status
+FROM attendance a
+JOIN users u ON a.user_id = u.id
+ORDER BY a.date DESC;
 ```
+
+### Database Configuration
+
+- **Database Name**: `userdb` (auto-created)
+- **Connection URL**: `jdbc:mysql://localhost:3306/userdb?createDatabaseIfNotExist=true`
+- **Tables**: Automatically created by Hibernate
+  - `users` - User accounts and authentication
+  - `attendance` - Attendance records
+
+📖 **For troubleshooting and advanced configuration, see [MYSQL_SETUP.md](MYSQL_SETUP.md)**
 
 ## 📧 QSSN Email Notification Service
 

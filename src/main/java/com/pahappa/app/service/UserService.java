@@ -77,14 +77,53 @@ public interface UserService {
     boolean existsByUsername(String username);
 
     /**
-     * Check if an email already exists in the system.
+     * Check if email exists.
      * 
-     * Used during registration validation to prevent duplicate emails.
-     * 
-     * @param email The email to check
+     * @param email Email to check
      * @return true if email exists, false otherwise
      */
     boolean existsByEmail(String email);
+
+    /**
+     * Change the password for a user.
+     * Verifies the current password before applying the new one.
+     *
+     * @param username        the user whose password is being changed
+     * @param currentPassword the user's current (plain-text) password
+     * @param newPassword     the desired new plain-text password
+     * @throws RuntimeException if the current password is wrong or user not found
+     */
+    void changePassword(String username, String currentPassword, String newPassword);
+
+    /**
+     * Promote an intern to ADMIN role.
+     *
+     * @param userId the ID of the user to promote
+     * @throws RuntimeException if user not found
+     */
+    void promoteToAdmin(Long userId);
+
+    /**
+     * Demote an admin back to INTERN role.
+     *
+     * @param userId the ID of the user to demote
+     * @throws RuntimeException if user not found
+     */
+    void demoteToIntern(Long userId);
+
+    /**
+     * Find all users with INTERN role.
+     *
+     * @return list of interns
+     */
+    List<User> findAllInterns();
+
+    /**
+     * Find all users with ADMIN role.
+     *
+     * @return list of admins
+     */
+    List<User> findAllAdmins();
 }
 
 // Made with Bob

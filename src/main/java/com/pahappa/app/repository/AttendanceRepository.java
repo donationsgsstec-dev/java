@@ -108,6 +108,35 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
      * @param date Today's date
      * @return true if user has signed in today
      */
+    /**
+     * Count late arrivals for a user in a date range
+     * @param user The user
+     * @param startDate Start date
+     * @param endDate End date
+     * @return Count of late arrivals
+     */
+    @Query("SELECT COUNT(a) FROM Attendance a WHERE a.user = :user AND a.attendanceDate BETWEEN :startDate AND :endDate AND a.isLate = true")
+    long countLateArrivalsByUserAndDateRange(@Param("user") User user, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+
+    /**
+     * Count early departures for a user in a date range
+     * @param user The user
+     * @param startDate Start date
+     * @param endDate End date
+     * @return Count of early departures
+     */
+    @Query("SELECT COUNT(a) FROM Attendance a WHERE a.user = :user AND a.attendanceDate BETWEEN :startDate AND :endDate AND a.isEarlyDeparture = true")
+    long countEarlyDeparturesByUserAndDateRange(@Param("user") User user, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+
+    /**
+     * Find all late arrivals in a date range
+     * @param startDate Start date
+     * @param endDate End date
+     * @return List of late attendance records
+     */
+    @Query("SELECT a FROM Attendance a WHERE a.attendanceDate BETWEEN :startDate AND :endDate AND a.isLate = true ORDER BY a.signInTime DESC")
+    List<Attendance> findLateArrivalsByDateRange(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+
     boolean existsByUserAndAttendanceDate(User user, LocalDate date);
 }
 

@@ -86,6 +86,26 @@ mvn spring-boot:run
 
 ## 🚀 Step-by-Step Instructions
 
+### Step 0: Setup MySQL Database (REQUIRED)
+
+**The application now uses MySQL instead of H2!**
+
+1. **Install MySQL Server** (if not already installed)
+   - Download from: https://dev.mysql.com/downloads/mysql/
+   - Ensure MySQL is running on `localhost:3306`
+
+2. **Configure Database Credentials** (if needed)
+   
+   Edit [`src/main/resources/application.properties`](src/main/resources/application.properties):
+   ```properties
+   spring.datasource.username=root
+   spring.datasource.password=your_password_here
+   ```
+
+3. **That's it!** The database `userdb` will be created automatically when you run the application.
+
+📖 **For detailed MySQL setup and troubleshooting, see [MYSQL_SETUP.md](MYSQL_SETUP.md)**
+
 ### Step 1: Open a NEW Command Prompt
 
 **Important:** Close any existing command prompts and open a fresh one in the project directory:
@@ -276,19 +296,28 @@ Once running, access these URLs:
 - **Registration**: http://localhost:8080/register
 - **Login**: http://localhost:8080/login
 - **Home (requires login)**: http://localhost:8080/home
-- **H2 Console**: http://localhost:8080/h2-console
-  - JDBC URL: `jdbc:h2:mem:userdb`
-  - Username: `sa`
-  - Password: (empty)
+- **Attendance**: http://localhost:8080/attendance
+
+### MySQL Database Access
+
+Use MySQL Workbench or command line:
+```bash
+mysql -u root -p
+USE userdb;
+SELECT * FROM users;
+```
 
 ---
 
 ## ✅ Success Checklist
 
+- [ ] MySQL Server is installed and running
+- [ ] Database credentials configured in application.properties
 - [ ] Opened NEW command prompt in project directory
 - [ ] Used correct Maven command (use-local-maven.bat or full path)
 - [ ] Build completed with "BUILD SUCCESS"
 - [ ] Application started with "Started UserAuthApplication"
+- [ ] Database `userdb` created automatically
 - [ ] Can access http://localhost:8080
 - [ ] Can register a new user
 - [ ] Can login successfully
@@ -299,11 +328,12 @@ Once running, access these URLs:
 
 ## 💡 Pro Tips
 
-1. **Always use a fresh terminal** after changing environment variables
-2. **Use `use-local-maven.bat`** to avoid conda conflicts
-3. **Check Java version** before building: `java -version` (should be 17+)
-4. **Clear browser cache** if pages don't load correctly
-5. **Check H2 console** to verify users are being saved
+1. **Ensure MySQL is running** before starting the application
+2. **Always use a fresh terminal** after changing environment variables
+3. **Use `use-local-maven.bat`** to avoid conda conflicts
+4. **Check Java version** before building: `java -version` (should be 17+)
+5. **Clear browser cache** if pages don't load correctly
+6. **Use MySQL client** to verify users are being saved: `mysql -u root -p`
 
 ---
 
@@ -319,6 +349,7 @@ Once running, access these URLs:
 
 ## 📚 Additional Documentation
 
+- [`MYSQL_SETUP.md`](MYSQL_SETUP.md) - MySQL database setup guide
 - [`QUICK_START.md`](QUICK_START.md) - Quick start guide
 - [`README.md`](README.md) - Full documentation
 - [`TROUBLESHOOTING.md`](TROUBLESHOOTING.md) - Troubleshooting guide

@@ -65,7 +65,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
      * @throws ServletException If a servlet error occurs
      */
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, 
+    public void onAuthenticationSuccess(HttpServletRequest request,
                                        HttpServletResponse response,
                                        Authentication authentication) throws IOException, ServletException {
         
@@ -81,6 +81,11 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
             if (userOptional.isPresent()) {
                 var user = userOptional.get();
                 emailService.sendLoginNotification(user.getEmail(), username);
+                
+                // If user is an admin, notify other admins
+                if (user.getRole() == com.pahappa.app.entity.User.UserRole.ADMIN) {
+                    emailService.sendAdminLoginNotification(user.getEmail(), username);
+                }
             }
         } catch (Exception e) {
             // Log error but don't fail the login

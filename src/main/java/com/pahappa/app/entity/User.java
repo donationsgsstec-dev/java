@@ -108,6 +108,12 @@ public class User {
     private UserRole role = UserRole.INTERN;
 
     /**
+     * Unique QR code for the user
+     */
+    @Column(name = "qr_code", unique = true, length = 500)
+    private String qrCode;
+
+    /**
      * One-to-many relationship with Attendance
      */
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -245,6 +251,14 @@ public class User {
 
     public void setRole(UserRole role) {
         this.role = role;
+    }
+
+    public String getQrCode() {
+        return qrCode;
+    }
+
+    public void setQrCode(String qrCode) {
+        this.qrCode = qrCode;
     }
 
     public List<Attendance> getAttendanceRecords() {
