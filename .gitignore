@@ -35,6 +35,13 @@ buildNumber.properties
 .mvn/timing.properties
 .mvn/wrapper/maven-wrapper.jar
 
+# MySQL Portable Installation (local development only)
+mysql-8.0.40-winx64/
+*.pid
+*.ibd
+*.dblwr
+*.sdi
+
 # Eclipse
 .classpath
 .project
@@ -72,6 +79,7 @@ Desktop.ini
 
 # Spring Boot
 spring-boot-devtools.properties
+application.properties
 
 # H2 Database files
 *.db
@@ -86,5 +94,14 @@ logs/
 *.bak
 *.swp
 *~.nib
+
+# Maven Wrapper JAR (will be downloaded)
+.mvn/wrapper/maven-wrapper.jar
+
+# Render specific
+.render/
+
+# Local batch scripts (Windows specific)
+*.bat
 
 # Made with Bob
