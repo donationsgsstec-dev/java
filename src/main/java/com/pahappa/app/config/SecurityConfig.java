@@ -173,6 +173,7 @@ public class SecurityConfig {
                     "/register",           // Registration page
                     "/register/save",      // Registration form submission
                     "/login",              // Login page
+                    "/forgot-password",    // Forgot password page
                     "/css/**",             // Static CSS files
                     "/js/**",              // Static JavaScript files
                     "/images/**",          // Static images
