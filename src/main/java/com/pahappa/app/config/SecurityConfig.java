@@ -176,7 +176,8 @@ public class SecurityConfig {
                     "/css/**",             // Static CSS files
                     "/js/**",              // Static JavaScript files
                     "/images/**",          // Static images
-                    "/h2-console/**"       // H2 database console (for development)
+                    "/h2-console/**",      // H2 database console (for development)
+                    "/actuator/**"         // Actuator endpoints (e.g. /actuator/health for Railway healthcheck)
                 ).permitAll()
                 // Attendance endpoints - require authentication
                 .requestMatchers(
