@@ -157,6 +157,12 @@
             <version>5.2.5</version>
         </dependency>
         
+        <!-- Spring Boot Actuator for Health Checks -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        
         <!-- Spring Boot Mail for Email Notifications -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

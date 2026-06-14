@@ -31,7 +31,7 @@ EXPOSE 8080
 # Set JVM options for memory management
 ENV JAVA_TOOL_OPTIONS="-Xmx512m -Xms256m"
 
-# Run the application
-ENTRYPOINT ["java", "-Dserver.port=${PORT:-8080}", "-jar", "app.war"]
+# Run the application using shell form to allow environment variable expansion
+CMD java -Dserver.port=${PORT:-8080} -Dspring.profiles.active=${SPRING_PROFILES_ACTIVE:-production} -jar app.war
 
 # Made with Bob
