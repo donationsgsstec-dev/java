@@ -5,7 +5,7 @@ services:
   # Web Service - Spring Boot Application
   - type: web
     name: pahappa-attendance-system
-    env: java
+    runtime: java
     region: oregon
     plan: free
     buildCommand: ./mvnw clean package -DskipTests
