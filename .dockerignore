@@ -1,0 +1,40 @@
+# Git files
+.git
+.github
+.gitignore
+
+# IDE files
+.vscode
+.idea
+*.iml
+.qodo
+
+# Documentation
+*.md
+*.docx
+
+# Build artifacts (will be built in container)
+target
+*.jar
+*.war
+
+# Scripts
+*.bat
+*.sh
+
+# SQL files
+*.sql
+
+# Maven wrapper (already in image)
+apache-maven-3.9.16
+
+# Temp files
+*.tmp
+*.log
+
+# Test files
+src/test
+
+# Environment files
+.env
+.env.local

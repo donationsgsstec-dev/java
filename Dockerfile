@@ -16,8 +16,8 @@ COPY src ./src
 # Build the application
 RUN mvn clean package -DskipTests
 
-# Runtime stage
-FROM eclipse-temurin:17-jre-jammy
+# Runtime stage - Use Alpine for smaller image and faster startup
+FROM eclipse-temurin:17-jre-alpine
 
 # Set working directory
 WORKDIR /app
@@ -28,10 +28,16 @@ COPY --from=build /app/target/user-auth-app-1.0.0.war app.war
 # Expose port (Render will override with $PORT)
 EXPOSE 8080
 
-# Set JVM options for memory management
-ENV JAVA_TOOL_OPTIONS="-Xmx512m -Xms256m"
+# Optimize JVM for faster startup and lower memory usage
+# -Xmx384m: Maximum heap size (reduced from 512m)
+# -Xms192m: Initial heap size (reduced from 256m)
+# -XX:+UseSerialGC: Use serial garbage collector (faster startup)
+# -XX:TieredStopAtLevel=1: Disable C2 compiler (faster startup)
+ENV JAVA_TOOL_OPTIONS="-Xmx384m -Xms192m -XX:+UseSerialGC -XX:TieredStopAtLevel=1"
 
 # Run the application using shell form to allow environment variable expansion
-CMD java -Dserver.port=${PORT:-8080} -Dspring.profiles.active=${SPRING_PROFILES_ACTIVE:-production} -jar app.war
+CMD java -Dserver.port=${PORT:-8080} \
+    -Dspring.profiles.active=${SPRING_PROFILES_ACTIVE:-production} \
+    -jar app.war
 
 # Made with Bob
