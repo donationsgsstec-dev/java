@@ -1,0 +1,12 @@
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+startCommand = ""
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 3
+
+# Remove health check temporarily to see if app starts
+# healthcheckPath = "/actuator/health"
+# healthcheckTimeout = 300
