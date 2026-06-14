@@ -1,5 +1,6 @@
 # Render Blueprint for Spring Boot Attendance System
 # This file defines the infrastructure for deploying on Render
+# Using existing database: java_vbxv
 
 services:
   # Web Service - Spring Boot Application
@@ -15,16 +16,12 @@ services:
         value: -Xmx512m -Xms256m
       - key: SPRING_PROFILES_ACTIVE
         value: production
-      - key: DATABASE_URL
-        fromDatabase:
-          name: pahappa-attendance-db
-          property: connectionString
       - key: SPRING_DATASOURCE_URL
-        sync: false
+        value: jdbc:postgresql://dpg-d8mv6s8js32c73d4j92g-a.oregon-postgres.render.com:5432/java_vbxv
       - key: SPRING_DATASOURCE_USERNAME
-        sync: false
+        value: java_vbxv_user
       - key: SPRING_DATASOURCE_PASSWORD
-        sync: false
+        value: jiQ79h9KMpiwcN1W0KQ9Y7iRPx4iZD8e
       - key: MAIL_USERNAME
         sync: false
       - key: MAIL_PASSWORD
@@ -34,12 +31,6 @@ services:
       - key: APP_ADMIN_EMAIL
         sync: false
 
-databases:
-  # PostgreSQL Database (Free tier)
-  - name: pahappa-attendance-db
-    databaseName: attendance_db
-    user: attendance_user
-    plan: free
-    region: oregon
+# No database section - using existing java_vbxv database
 
 # Made with Bob
