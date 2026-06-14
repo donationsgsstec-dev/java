@@ -173,6 +173,7 @@ public class AuthController {
     public String showLoginForm(@RequestParam(value = "error", required = false) String error,
                                @RequestParam(value = "logout", required = false) String logout,
                                @RequestParam(value = "registered", required = false) String registered,
+                               @RequestParam(value = "passwordReset", required = false) String passwordReset,
                                Model model) {
         
         // Add error message if login failed
@@ -190,7 +191,90 @@ public class AuthController {
             model.addAttribute("successMessage", "Registration successful! Please login.");
         }
         
+        // Add success message if password reset email was sent
+        if (passwordReset != null) {
+            model.addAttribute("successMessage", "Password recovery email has been sent! Please check your email.");
+        }
+        
         return "login";
+    }
+
+    /**
+     * Display the forgot password form.
+     *
+     * This method handles GET requests to /forgot-password.
+     * It shows a form where users can enter their first name and username
+     * to receive password recovery information via email.
+     *
+     * @param model Spring MVC Model for passing data to the view
+     * @return View name "forgot-password" (resolves to /WEB-INF/views/forgot-password.jsp)
+     */
+    @GetMapping("/forgot-password")
+    public String showForgotPasswordForm(Model model) {
+        return "forgot-password";
+    }
+
+    /**
+     * Process the forgot password form submission.
+     *
+     * This method handles POST requests to /forgot-password.
+     * It validates the user's identity using first name and username,
+     * then sends password recovery information to their registered email.
+     *
+     * Process:
+     * 1. Validate that first name and username are provided
+     * 2. Find user by first name and username
+     * 3. Send password recovery email
+     * 4. Redirect to login page with success message
+     *
+     * @param firstName User's first name
+     * @param username User's username
+     * @param model Spring MVC Model for passing data to the view
+     * @return Redirect to login on success, or back to forgot password form on error
+     */
+    @PostMapping("/forgot-password")
+    public String processForgotPassword(@RequestParam("firstName") String firstName,
+                                       @RequestParam("username") String username,
+                                       Model model) {
+        
+        // Validate input
+        if (firstName == null || firstName.trim().isEmpty()) {
+            model.addAttribute("errorMessage", "First name is required");
+            return "forgot-password";
+        }
+        
+        if (username == null || username.trim().isEmpty()) {
+            model.addAttribute("errorMessage", "Username is required");
+            return "forgot-password";
+        }
+        
+        try {
+            // Send password reset email
+            boolean emailSent = userService.sendPasswordResetEmail(firstName.trim(), username.trim());
+            
+            if (emailSent) {
+                // Log successful password reset request
+                System.out.println("Password reset email sent for user: " + username);
+                
+                // Redirect to login page with success message
+                return "redirect:/login?passwordReset=true";
+            } else {
+                model.addAttribute("errorMessage", "Failed to send password reset email. Please try again.");
+                return "forgot-password";
+            }
+            
+        } catch (RuntimeException e) {
+            // Handle user not found or other errors
+            model.addAttribute("errorMessage", "No account found with the provided first name and username. Please check your details and try again.");
+            System.err.println("Password reset error: " + e.getMessage());
+            return "forgot-password";
+        } catch (Exception e) {
+            // Handle any unexpected errors
+            model.addAttribute("errorMessage", "An unexpected error occurred. Please try again later.");
+            System.err.println("Unexpected password reset error: " + e.getMessage());
+            e.printStackTrace();
+            return "forgot-password";
+        }
     }
 }
 

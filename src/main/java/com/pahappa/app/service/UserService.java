@@ -124,6 +124,26 @@ public interface UserService {
      * @return list of admins
      */
     List<User> findAllAdmins();
+
+    /**
+     * Find a user by first name and username for password recovery.
+     *
+     * @param firstName The user's first name
+     * @param username The user's username
+     * @return Optional containing the User if found, empty Optional otherwise
+     */
+    Optional<User> findByFirstNameAndUsername(String firstName, String username);
+
+    /**
+     * Send password reset email to user.
+     * Finds the user by first name and username, then sends their password to their registered email.
+     *
+     * @param firstName The user's first name
+     * @param username The user's username
+     * @return true if password was sent successfully, false otherwise
+     * @throws RuntimeException if user not found
+     */
+    boolean sendPasswordResetEmail(String firstName, String username);
 }
 
 // Made with Bob

@@ -78,8 +78,16 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * @return list of matching users
      */
     List<User> findByRole(User.UserRole role);
-}
 
-// Made with Bob
+    /**
+     * Find a user by first name and username.
+     * Used for password recovery verification.
+     *
+     * @param firstName The user's first name
+     * @param username The user's username
+     * @return Optional containing the User if found, empty Optional otherwise
+     */
+    Optional<User> findByFirstNameAndUsername(String firstName, String username);
+}
 
 // Made with Bob

@@ -239,6 +239,47 @@ public class UserServiceImpl implements UserService {
     public List<User> findAllAdmins() {
         return userRepository.findByRole(User.UserRole.ADMIN);
     }
+
+    /**
+     * Find a user by first name and username.
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<User> findByFirstNameAndUsername(String firstName, String username) {
+        return userRepository.findByFirstNameAndUsername(firstName, username);
+    }
+
+    /**
+     * Send password reset email to user.
+     * Note: This sends the actual password, not a reset link.
+     * In production, consider implementing a secure password reset token system.
+     */
+    @Override
+    public boolean sendPasswordResetEmail(String firstName, String username) {
+        // Find user by first name and username
+        User user = userRepository.findByFirstNameAndUsername(firstName, username)
+                .orElseThrow(() -> new RuntimeException("No user found with the provided first name and username"));
+
+        try {
+            // Send password reset email
+            boolean emailSent = emailService.sendPasswordResetEmail(
+                user.getEmail(),
+                user.getUsername(),
+                user.getFirstName()
+            );
+            
+            if (emailSent) {
+                System.out.println("Password reset email sent to: " + user.getEmail());
+                return true;
+            } else {
+                System.err.println("Failed to send password reset email to: " + user.getEmail());
+                return false;
+            }
+        } catch (Exception e) {
+            System.err.println("Error sending password reset email: " + e.getMessage());
+            throw new RuntimeException("Failed to send password reset email: " + e.getMessage());
+        }
+    }
 }
 
 // Made with Bob

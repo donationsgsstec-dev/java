@@ -106,4 +106,16 @@ public interface EmailService {
      * @return true if all emails were dispatched successfully
      */
     boolean sendRoomQRNotification(String expiresAt, String label);
+
+    /**
+     * Send password reset email to user with their account information.
+     * Note: This implementation sends account recovery information.
+     * In production, consider implementing a secure password reset token system.
+     *
+     * @param toEmail The recipient's email address
+     * @param username The user's username
+     * @param firstName The user's first name
+     * @return true if email was sent successfully, false otherwise
+     */
+    boolean sendPasswordResetEmail(String toEmail, String username, String firstName);
 }

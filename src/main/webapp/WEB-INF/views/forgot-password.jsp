@@ -1,12 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Pahappa App</title>
+    <title>Forgot Password - Pahappa App</title>
     <style>
         /* Global Styles */
         * {
@@ -48,6 +47,14 @@
             color: #666;
             margin-bottom: 30px;
             font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* Icon Style */
+        .icon {
+            text-align: center;
+            font-size: 48px;
+            margin-bottom: 20px;
         }
 
         /* Form Styles */
@@ -63,8 +70,7 @@
             font-size: 14px;
         }
 
-        input[type="text"],
-        input[type="password"] {
+        input[type="text"] {
             width: 100%;
             padding: 12px;
             border: 2px solid #ddd;
@@ -73,8 +79,7 @@
             transition: border-color 0.3s;
         }
 
-        input[type="text"]:focus,
-        input[type="password"]:focus {
+        input[type="text"]:focus {
             outline: none;
             border-color: #667eea;
         }
@@ -99,6 +104,12 @@
             border: 1px solid #cfc;
         }
 
+        .alert-info {
+            background-color: #e7f3ff;
+            color: #0066cc;
+            border: 1px solid #b3d9ff;
+        }
+
         /* Button Styles */
         .btn {
             width: 100%;
@@ -120,42 +131,48 @@
             background-color: #5568d3;
         }
 
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+            margin-top: 10px;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
         /* Link Styles */
-        .register-link {
+        .back-link {
             text-align: center;
             margin-top: 20px;
             font-size: 14px;
             color: #666;
         }
 
-        .register-link a {
+        .back-link a {
             color: #667eea;
             text-decoration: none;
             font-weight: 600;
         }
 
-        .register-link a:hover {
+        .back-link a:hover {
             text-decoration: underline;
         }
 
-        /* Remember Me Checkbox */
-        .remember-me {
-            display: flex;
-            align-items: center;
+        /* Info Box */
+        .info-box {
+            background-color: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 15px;
             margin-bottom: 20px;
+            border-radius: 5px;
         }
 
-        .remember-me input[type="checkbox"] {
-            margin-right: 8px;
-            width: 16px;
-            height: 16px;
-            cursor: pointer;
-        }
-
-        .remember-me label {
-            margin-bottom: 0;
-            cursor: pointer;
-            font-weight: normal;
+        .info-box p {
+            margin: 0;
+            font-size: 13px;
+            color: #555;
+            line-height: 1.6;
         }
 
         /* Responsive Design */
@@ -172,8 +189,9 @@
 </head>
 <body>
     <div class="container">
-        <h2>Welcome Back</h2>
-        <p class="subtitle">Please login to your account</p>
+        <div class="icon">🔐</div>
+        <h2>Forgot Password</h2>
+        <p class="subtitle">Enter your details to receive your password via email</p>
 
         <!-- Display error messages -->
         <c:if test="${not empty errorMessage}">
@@ -189,9 +207,29 @@
             </div>
         </c:if>
 
-        <!-- Login Form with Spring Security CSRF Protection -->
-        <form action="${pageContext.request.contextPath}/login" method="post" class="login-form">
+        <!-- Information Box -->
+        <div class="info-box">
+            <p>
+                <strong>📧 Password Recovery</strong><br>
+                Enter your first name and username. We'll send your password to your registered email address.
+            </p>
+        </div>
+
+        <!-- Forgot Password Form -->
+        <form action="${pageContext.request.contextPath}/forgot-password" method="post">
             
+            <!-- First Name Field -->
+            <div class="form-group">
+                <label for="firstName">First Name</label>
+                <input type="text" 
+                       id="firstName" 
+                       name="firstName" 
+                       placeholder="Enter your first name"
+                       required 
+                       autofocus 
+                       value="${param.firstName}" />
+            </div>
+
             <!-- Username Field -->
             <div class="form-group">
                 <label for="username">Username</label>
@@ -200,31 +238,7 @@
                        name="username" 
                        placeholder="Enter your username"
                        required 
-                       autofocus />
-            </div>
-
-            <!-- Password Field -->
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" 
-                       id="password" 
-                       name="password" 
-                       placeholder="Enter your password"
-                       required />
-            </div>
-
-            <!-- Remember Me and Forgot Password -->
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <div class="remember-me" style="margin-bottom: 0;">
-                    <input type="checkbox"
-                           id="remember-me"
-                           name="remember-me" />
-                    <label for="remember-me">Remember me</label>
-                </div>
-                <a href="${pageContext.request.contextPath}/forgot-password"
-                   style="color: #667eea; text-decoration: none; font-size: 14px; font-weight: 500;">
-                    Forgot Password?
-                </a>
+                       value="${param.username}" />
             </div>
 
             <!-- CSRF Token (required by Spring Security for POST requests) -->
@@ -235,17 +249,17 @@
             </c:if>
 
             <!-- Submit Button -->
-            <button type="submit" class="btn btn-primary">Sign In</button>
+            <button type="submit" class="btn btn-primary">Send Password to Email</button>
             
-            <!-- Security Note -->
-            <div style="text-align: center; margin-top: 15px; font-size: 12px; color: #999;">
-                <i>🔒 Secure login with Spring Security</i>
-            </div>
+            <!-- Back to Login Button -->
+            <a href="${pageContext.request.contextPath}/login">
+                <button type="button" class="btn btn-secondary">Back to Login</button>
+            </a>
         </form>
 
-        <!-- Register Link -->
-        <div class="register-link">
-            Don't have an account? <a href="${pageContext.request.contextPath}/register">Register here</a>
+        <!-- Additional Help -->
+        <div class="back-link">
+            Remember your password? <a href="${pageContext.request.contextPath}/login">Login here</a>
         </div>
     </div>
 </body>

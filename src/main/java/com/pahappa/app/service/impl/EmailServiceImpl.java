@@ -576,6 +576,73 @@ public class EmailServiceImpl implements EmailService {
             recipientAdmin, loggedOutAdmin, timestamp
         );
     }
+
+    @Override
+    public boolean sendPasswordResetEmail(String toEmail, String username, String firstName) {
+        if (!emailEnabled) {
+            System.out.println("Email sending is disabled. Skipping password reset email.");
+            return false;
+        }
+        
+        String subject = "Password Recovery - Pahappa Attendance System";
+        String htmlContent = buildPasswordResetEmailHtml(username, firstName);
+        
+        return sendEmail(toEmail, subject, htmlContent);
+    }
+
+    private String buildPasswordResetEmailHtml(String username, String firstName) {
+        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        return String.format(
+            "<!DOCTYPE html>" +
+            "<html><head><style>" +
+            "body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; }" +
+            ".container { max-width: 600px; margin: 0 auto; padding: 20px; }" +
+            ".header { background: linear-gradient(135deg, #667eea 0%%, #764ba2 100%%); color: white; padding: 30px 20px; text-align: center; border-radius: 10px 10px 0 0; }" +
+            ".header h1 { margin: 0; font-size: 24px; }" +
+            ".content { padding: 25px; background-color: #f9f9f9; }" +
+            ".info-box { background-color: #e8eaf6; padding: 15px 20px; border-left: 4px solid #667eea; border-radius: 4px; margin: 15px 0; }" +
+            ".info-box p { margin: 6px 0; }" +
+            ".warning { background-color: #fff3e0; padding: 12px 16px; border-left: 4px solid #FF9800; border-radius: 4px; font-size: 14px; margin-top: 15px; }" +
+            ".cta { text-align: center; margin: 25px 0; }" +
+            ".cta a { background: linear-gradient(135deg, #667eea 0%%, #764ba2 100%%); color: white; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 16px; display: inline-block; }" +
+            ".footer { text-align: center; padding: 15px; font-size: 12px; color: #666; border-top: 1px solid #eee; }" +
+            ".security-note { background-color: #ffebee; padding: 12px 16px; border-left: 4px solid #f44336; border-radius: 4px; font-size: 13px; margin-top: 15px; }" +
+            "</style></head><body>" +
+            "<div class='container'>" +
+            "<div class='header'>" +
+            "<h1>🔐 Password Recovery Request</h1>" +
+            "</div>" +
+            "<div class='content'>" +
+            "<h2>Hello %s!</h2>" +
+            "<p>We received a request to recover your password for the Pahappa Attendance System.</p>" +
+            "<div class='info-box'>" +
+            "<p><strong>👤 Username:</strong> %s</p>" +
+            "<p><strong>📧 Email:</strong> %s</p>" +
+            "<p><strong>🕐 Request Time:</strong> %s</p>" +
+            "</div>" +
+            "<p><strong>Important:</strong> Your account credentials have been verified. Please use your existing password to log in.</p>" +
+            "<div class='warning'>" +
+            "⚠️ <strong>Security Notice:</strong> If you did not request this password recovery, please contact your administrator immediately. Someone may be trying to access your account." +
+            "</div>" +
+            "<div class='cta'>" +
+            "<a href='#'>Login to Your Account</a>" +
+            "</div>" +
+            "<div class='security-note'>" +
+            "🔒 <strong>Password Security Tips:</strong><br>" +
+            "• Never share your password with anyone<br>" +
+            "• Use a strong, unique password<br>" +
+            "• Change your password regularly<br>" +
+            "• Enable two-factor authentication if available" +
+            "</div>" +
+            "<p style='margin-top: 20px; font-size: 13px; color: #666;'>" +
+            "If you're having trouble logging in, please contact your system administrator for assistance." +
+            "</p>" +
+            "</div>" +
+            "<div class='footer'><p>&copy; 2026 Pahappa Attendance System. All rights reserved.</p></div>" +
+            "</div></body></html>",
+            firstName, username, toEmail, timestamp
+        );
+    }
 }
 
 // Made with Bob
