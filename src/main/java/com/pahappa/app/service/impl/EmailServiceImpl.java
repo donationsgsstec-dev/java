@@ -617,7 +617,6 @@ public class EmailServiceImpl implements EmailService {
             "<p>We received a request to recover your password for the Pahappa Attendance System.</p>" +
             "<div class='info-box'>" +
             "<p><strong>👤 Username:</strong> %s</p>" +
-            "<p><strong>📧 Email:</strong> %s</p>" +
             "<p><strong>🕐 Request Time:</strong> %s</p>" +
             "</div>" +
             "<p><strong>Important:</strong> Your account credentials have been verified. Please use your existing password to log in.</p>" +
@@ -640,7 +639,7 @@ public class EmailServiceImpl implements EmailService {
             "</div>" +
             "<div class='footer'><p>&copy; 2026 Pahappa Attendance System. All rights reserved.</p></div>" +
             "</div></body></html>",
-            firstName, username, toEmail, timestamp
+            firstName, username, timestamp
         );
     }
 }
