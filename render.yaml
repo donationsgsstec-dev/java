@@ -22,12 +22,14 @@ services:
         value: java_vbxv_user
       - key: SPRING_DATASOURCE_PASSWORD
         value: jiQ79h9KMpiwcN1W0KQ9Y7iRPx4iZD8e
-      - key: MAIL_USERNAME
-        sync: false
-      - key: MAIL_PASSWORD
-        sync: false
-      - key: MAIL_FROM
-        value: noreply@pahappa.com
+      - key: QSSN_EMAIL_API_KEY
+        value: qssn_live_9e923f45d56ede8ec89ded81b13ccc246823cbb1bff67d31d07538c584a424fe
+      - key: QSSN_EMAIL_API_URL
+        value: https://qssn-d1-api.gastonsoftwaresolutions234.workers.dev/api/v1/emails/send
+      - key: QSSN_EMAIL_FROM_NAME
+        value: Pahappa Attendance System
+      - key: QSSN_EMAIL_ENABLED
+        value: true
       - key: APP_ADMIN_EMAIL
         sync: false
 
