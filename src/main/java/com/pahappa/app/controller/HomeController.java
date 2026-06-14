@@ -1,5 +1,6 @@
 package com.pahappa.app.controller;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -21,6 +22,21 @@ import org.springframework.web.bind.annotation.GetMapping;
  */
 @Controller
 public class HomeController {
+
+    @Value("${gss.ai.api.key}")
+    private String gssApiKey;
+
+    @Value("${gss.ai.cf.worker.url}")
+    private String gssCfWorkerUrl;
+
+    @Value("${gss.ai.hf.engine.url}")
+    private String gssHfEngineUrl;
+
+    @Value("${gss.ai.model}")
+    private String gssModel;
+
+    @Value("${gss.ai.enabled}")
+    private boolean gssEnabled;
 
     /**
      * Display the home page for authenticated users.
@@ -49,6 +65,9 @@ public class HomeController {
         // Add username to model for display in JSP
         model.addAttribute("username", username);
         
+        // Add GSS AI configuration to model
+        addGssConfigToModel(model);
+        
         return "home";
     }
 
@@ -63,6 +82,20 @@ public class HomeController {
     @GetMapping("/")
     public String root() {
         return "redirect:/home";
+    }
+
+    /**
+     * Helper method to add GSS AI configuration to model.
+     * This makes the configuration available to JSP pages.
+     *
+     * @param model Spring MVC Model
+     */
+    private void addGssConfigToModel(Model model) {
+        model.addAttribute("gssApiKey", gssApiKey);
+        model.addAttribute("gssCfWorkerUrl", gssCfWorkerUrl);
+        model.addAttribute("gssHfEngineUrl", gssHfEngineUrl);
+        model.addAttribute("gssModel", gssModel);
+        model.addAttribute("gssEnabled", gssEnabled);
     }
 }
 

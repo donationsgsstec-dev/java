@@ -445,6 +445,15 @@
     let juliaInitAttempts = 0;
     const MAX_INIT_ATTEMPTS = 10;
 
+    // GSS Configuration from backend (with fallback values)
+    const GSS_CONFIG = {
+        apiKey: '${gssApiKey != null ? gssApiKey : "gss_6VZZ4phctApuTplFG6dZIYj93asdSmXQ"}',
+        cfWorkerUrl: '${gssCfWorkerUrl != null ? gssCfWorkerUrl : "https://node.gss-tec.com"}',
+        hfEngineUrl: '${gssHfEngineUrl != null ? gssHfEngineUrl : "https://Gaston895-AI.hf.space"}',
+        model: '${gssModel != null ? gssModel : "llama-3.1-8b-instant"}',
+        enabled: '${gssEnabled}' === 'true'
+    };
+
     // Handle SDK loading error
     function handleJuliaSDKError() {
         console.warn('GSS SDK failed to load. Julia chat functionality will be disabled.');
@@ -457,14 +466,26 @@
 
     // Initialize GSS Client with retry mechanism
     function initializeJuliaGss() {
+        // Check if GSS is enabled
+        if (!GSS_CONFIG.enabled) {
+            console.log('Julia GSS Chat is disabled in configuration');
+            handleJuliaSDKError();
+            return false;
+        }
+
         try {
             if (typeof GSSClient !== 'undefined') {
-                console.log('Initializing Julia GSS Client...');
+                console.log('Initializing Julia GSS Client with config:', {
+                    cfWorkerUrl: GSS_CONFIG.cfWorkerUrl,
+                    hfEngineUrl: GSS_CONFIG.hfEngineUrl,
+                    model: GSS_CONFIG.model
+                });
+                
                 juliaGss = new GSSClient({
-                    apiKey: 'gss_6VZZ4phctApuTplFG6dZIYj93asdSmXQ',
-                    cfWorkerUrl: 'https://node.gss-tec.com',
-                    hfEngineUrl: 'https://Gaston895-AI.hf.space',
-                    model: 'llama-3.1-8b-instant'
+                    apiKey: GSS_CONFIG.apiKey,
+                    cfWorkerUrl: GSS_CONFIG.cfWorkerUrl,
+                    hfEngineUrl: GSS_CONFIG.hfEngineUrl,
+                    model: GSS_CONFIG.model
                 });
                 juliaSdkAvailable = true;
                 console.log('Julia GSS Client initialized successfully!');
