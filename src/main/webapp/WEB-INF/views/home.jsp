@@ -507,5 +507,8 @@
             }
         });
     </script>
+    
+    <!-- Include Julia Chat Widget -->
+    <jsp:include page="julia-chat-widget.jsp" />
 </body>
 </html>

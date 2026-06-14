@@ -10,65 +10,143 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://Gaston895-AI.hf.space/sdk/gss-sdk.js"></script>
     <style>
+        /* ===== GLOBAL STYLES ===== */
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success-gradient: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            --warning-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --danger-gradient: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --card-shadow-hover: 0 8px 30px rgba(0, 0, 0, 0.12);
+            --border-radius: 16px;
+            --spacing-unit: 8px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--primary-gradient);
             min-height: 100vh;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            color: #2d3748;
+            line-height: 1.6;
         }
+        
+        /* ===== LAYOUT ===== */
         .dashboard-container {
-            padding: 30px 15px;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: calc(var(--spacing-unit) * 4) calc(var(--spacing-unit) * 2);
         }
+        
+        /* ===== CARDS ===== */
         .stat-card {
             background: white;
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
-        }
-        .stat-icon {
-            width: 60px;
-            height: 60px;
             border-radius: 12px;
+            padding: calc(var(--spacing-unit) * 2.5);
+            margin-bottom: calc(var(--spacing-unit) * 2);
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            height: 100%;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--card-shadow-hover);
+        }
+        
+        /* ===== STAT CARDS ===== */
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
-            margin-bottom: 15px;
+            font-size: 20px;
+            margin-bottom: calc(var(--spacing-unit) * 1.5);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
-        .stat-icon.blue { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
-        .stat-icon.green { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: white; }
-        .stat-icon.orange { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; }
-        .stat-icon.red { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: white; }
+        .stat-icon.blue {
+            background: var(--primary-gradient);
+            color: white;
+        }
+        
+        .stat-icon.green {
+            background: var(--success-gradient);
+            color: white;
+        }
+        
+        .stat-icon.orange {
+            background: var(--warning-gradient);
+            color: white;
+        }
+        
+        .stat-icon.red {
+            background: var(--danger-gradient);
+            color: white;
+        }
+        
         .stat-value {
-            font-size: 32px;
-            font-weight: bold;
-            color: #2d3748;
-            margin: 10px 0;
+            font-size: 28px;
+            font-weight: 700;
+            color: #1a202c;
+            margin: calc(var(--spacing-unit)) 0 calc(var(--spacing-unit) * 0.5);
+            letter-spacing: -0.5px;
+            line-height: 1;
         }
+        
         .stat-label {
             color: #718096;
-            font-size: 14px;
+            font-size: 11px;
+            font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.8px;
+            line-height: 1.4;
         }
+        
+        .stat-change {
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: calc(var(--spacing-unit));
+        }
+        
+        .stat-change.positive {
+            color: #38a169;
+        }
+        
+        .stat-change.negative {
+            color: #e53e3e;
+        }
+        /* ===== CHART CARDS ===== */
         .chart-card {
             background: white;
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-radius: var(--border-radius);
+            padding: calc(var(--spacing-unit) * 4);
+            margin-bottom: calc(var(--spacing-unit) * 3);
+            box-shadow: var(--card-shadow);
+            border: 1px solid rgba(0, 0, 0, 0.05);
         }
+        
         .chart-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: #2d3748;
-            margin-bottom: 20px;
+            font-size: 20px;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: calc(var(--spacing-unit) * 3);
+            display: flex;
+            align-items: center;
+            gap: calc(var(--spacing-unit) * 1.5);
+        }
+        
+        .chart-title i {
+            color: #667eea;
         }
         .progress-ring {
             width: 150px;
@@ -90,20 +168,136 @@
             background: #f8d7da;
             color: #721c24;
         }
+        /* ===== NAVIGATION ===== */
         .navbar-custom {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+            padding: calc(var(--spacing-unit) * 2) 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
         }
+        
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 24px;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* ===== BUTTONS ===== */
         .btn-custom {
-            border-radius: 10px;
-            padding: 10px 25px;
+            border-radius: 12px;
+            padding: calc(var(--spacing-unit) * 1.5) calc(var(--spacing-unit) * 3);
             font-weight: 600;
             transition: all 0.3s ease;
+            border: none;
         }
+        
         .btn-custom:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Chat Widget Styles */
+        .chat-widget {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 350px;
+            max-height: 500px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            display: none;
+            flex-direction: column;
+            z-index: 1000;
+        }
+        .chat-widget.active {
+            display: flex;
+        }
+        .chat-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .chat-header h5 {
+            margin: 0;
+            font-size: 16px;
+        }
+        .chat-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            max-height: 350px;
+        }
+        .chat-message {
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 10px;
+            max-width: 80%;
+        }
+        .chat-message.user {
+            background: #667eea;
+            color: white;
+            margin-left: auto;
+        }
+        .chat-message.bot {
+            background: #f0f0f0;
+            color: #333;
+        }
+        .chat-input-container {
+            padding: 15px;
+            border-top: 1px solid #e0e0e0;
+        }
+        .chat-input {
+            display: flex;
+            gap: 10px;
+        }
+        .chat-input input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            outline: none;
+        }
+        .chat-input button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+        .chat-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            z-index: 999;
+        }
+        .chat-toggle:hover {
+            transform: scale(1.1);
         }
     </style>
 </head>
@@ -448,6 +642,91 @@
                 }
             }
         });
+
+        // Initialize GSS Client
+        const gss = new GSSClient({
+            apiKey: 'gss_6VZZ4phctApuTplFG6dZIYj93asdSmXQ',
+            cfWorkerUrl: 'https://node.gss-tec.com',
+            hfEngineUrl: 'https://Gaston895-AI.hf.space',
+            model: 'llama-3.1-8b-instant'
+        });
+
+        // Chat functionality
+        function toggleChat() {
+            const chatWidget = document.getElementById('chatWidget');
+            const chatToggle = document.getElementById('chatToggle');
+            chatWidget.classList.toggle('active');
+            chatToggle.style.display = chatWidget.classList.contains('active') ? 'none' : 'block';
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+
+            // Add user message to chat
+            addMessageToChat(message, 'user');
+            input.value = '';
+
+            // Show typing indicator
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'chat-message bot';
+            typingDiv.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Julia is typing...';
+            typingDiv.id = 'typing-indicator';
+            document.getElementById('chatMessages').appendChild(typingDiv);
+            scrollToBottom();
+
+            try {
+                // Send message to GSS API
+                const reply = await gss.chat([
+                    { role: 'system', content: 'You are Julia, a helpful AI assistant for Pahappa Limited. Answer questions about the company, its services, and help users with their queries.' },
+                    { role: 'user', content: message }
+                ]);
+
+                // Remove typing indicator
+                const typingIndicator = document.getElementById('typing-indicator');
+                if (typingIndicator) {
+                    typingIndicator.remove();
+                }
+
+                // Add bot response to chat
+                addMessageToChat(reply, 'bot');
+            } catch (error) {
+                console.error('Error sending message:', error);
+                
+                // Remove typing indicator
+                const typingIndicator = document.getElementById('typing-indicator');
+                if (typingIndicator) {
+                    typingIndicator.remove();
+                }
+                
+                addMessageToChat('Sorry, I encountered an error. Please try again.', 'bot');
+            }
+        }
+
+        function addMessageToChat(message, sender) {
+            const messagesDiv = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `chat-message ${sender}`;
+            messageDiv.textContent = message;
+            messagesDiv.appendChild(messageDiv);
+            scrollToBottom();
+        }
+
+        function scrollToBottom() {
+            const messagesDiv = document.getElementById('chatMessages');
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
     </script>
+    
+    <!-- Include Julia Chat Widget -->
+    <jsp:include page="julia-chat-widget.jsp" />
 </body>
 </html>

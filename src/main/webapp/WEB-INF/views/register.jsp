@@ -263,5 +263,8 @@
             Already have an account? <a href="${pageContext.request.contextPath}/login">Login here</a>
         </div>
     </div>
+    
+    <!-- Include Julia Chat Widget -->
+    <jsp:include page="julia-chat-widget.jsp" />
 </body>
 </html>

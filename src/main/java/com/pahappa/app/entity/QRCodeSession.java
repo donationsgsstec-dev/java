@@ -17,7 +17,6 @@ import java.time.LocalDateTime;
  */
 @Entity
 @Table(name = "qr_code_sessions", indexes = {
-    @Index(name = "idx_qr_code_data", columnList = "qr_code_data"),
     @Index(name = "idx_user_created_at", columnList = "user_id,created_at"),
     @Index(name = "idx_expires_at", columnList = "expires_at")
 })
@@ -36,8 +35,10 @@ public class QRCodeSession {
 
     /**
      * The encrypted QR code data
+     * Note: Reduced length to 500 to allow indexing with utf8mb4 charset
+     * (MySQL max key length is 3072 bytes, utf8mb4 uses 4 bytes per char: 3072/4 = 768 max)
      */
-    @Column(name = "qr_code_data", nullable = false, unique = true, length = 1000)
+    @Column(name = "qr_code_data", nullable = false, unique = true, length = 500, columnDefinition = "VARCHAR(500)")
     private String qrCodeData;
 
     /**
