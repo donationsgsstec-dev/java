@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!-- Julia Chat Widget - Reusable Component -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<script src="https://Gaston895-AI.hf.space/sdk/gss-sdk.js" async onerror="handleJuliaSDKError()"></script>
+<script src="https://Gaston895-AI.hf.space/sdk/gss-sdk.js" onerror="handleJuliaSDKError()"></script>
 
 <style>
     /* Julia Chat Widget Styles */
@@ -442,6 +442,8 @@
     // Global variables for Julia chat
     let juliaGss = null;
     let juliaSdkAvailable = false;
+    let juliaInitAttempts = 0;
+    const MAX_INIT_ATTEMPTS = 10;
 
     // Handle SDK loading error
     function handleJuliaSDKError() {
@@ -453,10 +455,11 @@
         }
     }
 
-    // Initialize GSS Client when SDK loads successfully
-    window.addEventListener('load', function() {
+    // Initialize GSS Client with retry mechanism
+    function initializeJuliaGss() {
         try {
             if (typeof GSSClient !== 'undefined') {
+                console.log('Initializing Julia GSS Client...');
                 juliaGss = new GSSClient({
                     apiKey: 'gss_6VZZ4phctApuTplFG6dZIYj93asdSmXQ',
                     cfWorkerUrl: 'https://node.gss-tec.com',
@@ -464,14 +467,37 @@
                     model: 'llama-3.1-8b-instant'
                 });
                 juliaSdkAvailable = true;
+                console.log('Julia GSS Client initialized successfully!');
+                return true;
             } else {
-                handleJuliaSDKError();
+                juliaInitAttempts++;
+                if (juliaInitAttempts < MAX_INIT_ATTEMPTS) {
+                    console.log(`GSSClient not ready yet, retrying... (${juliaInitAttempts}/${MAX_INIT_ATTEMPTS})`);
+                    setTimeout(initializeJuliaGss, 500);
+                } else {
+                    console.error('GSSClient failed to load after maximum attempts');
+                    handleJuliaSDKError();
+                }
+                return false;
             }
         } catch (error) {
             console.error('Error initializing Julia GSS Client:', error);
-            handleJuliaSDKError();
+            juliaInitAttempts++;
+            if (juliaInitAttempts < MAX_INIT_ATTEMPTS) {
+                setTimeout(initializeJuliaGss, 500);
+            } else {
+                handleJuliaSDKError();
+            }
+            return false;
         }
-    });
+    }
+
+    // Start initialization when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeJuliaGss);
+    } else {
+        initializeJuliaGss();
+    }
 
     // Tooltip functions
     function showJuliaTooltip() {
