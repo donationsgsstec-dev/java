@@ -51,6 +51,9 @@ public class RoomQRService {
 
     /** Size of the generated QR code image in pixels */
     private static final int QR_SIZE = 400;
+    
+    /** Base URL for QR code scanning */
+    private static final String BASE_URL = "https://pahappa-attendance-system-production.up.railway.app";
 
     private final RoomQRSessionRepository roomQRSessionRepository;
     private final WorkScheduleService workScheduleService;
@@ -146,7 +149,11 @@ public class RoomQRService {
         hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
         hints.put(EncodeHintType.MARGIN, 1);
 
-        BitMatrix matrix = writer.encode(session.getToken(), BarcodeFormat.QR_CODE,
+        // Create full URL with token and session type
+        String qrCodeUrl = BASE_URL + "/attendance/qr/room-scan?token=" + session.getToken() +
+                          "&type=" + session.getSessionType().name();
+        
+        BitMatrix matrix = writer.encode(qrCodeUrl, BarcodeFormat.QR_CODE,
                 QR_SIZE, QR_SIZE, hints);
 
         // 2. Convert BitMatrix → BufferedImage

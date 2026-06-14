@@ -43,6 +43,9 @@ public class QRCodeService {
     private static final int QR_CODE_HEIGHT = 300;
     private static final int QR_CODE_EXPIRY_MINUTES = 10;
     private static final int RATE_LIMIT_PER_MINUTE = 2;
+    
+    // Base URL for QR code scanning - will be set from application properties
+    private static final String BASE_URL = "https://pahappa-attendance-system-production.up.railway.app";
 
     @Autowired
     private QRCodeSessionRepository qrCodeSessionRepository;
@@ -61,19 +64,22 @@ public class QRCodeService {
         checkRateLimit(user);
         
         // Create encrypted data with timestamp
-        String data = encryptData(user.getId() + ":" + user.getUsername() + ":" + System.currentTimeMillis());
+        String encryptedToken = encryptData(user.getId() + ":" + user.getUsername() + ":" + System.currentTimeMillis());
+        
+        // Create full URL with encrypted token
+        String qrCodeUrl = BASE_URL + "/attendance/qr/scan?token=" + encryptedToken;
         
         // Create QR code session
-        QRCodeSession session = new QRCodeSession(user, data);
+        QRCodeSession session = new QRCodeSession(user, encryptedToken);
         qrCodeSessionRepository.save(session);
         
-        // Generate QR code
+        // Generate QR code with URL
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
         Map<EncodeHintType, Object> hints = new HashMap<>();
         hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
         hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
         
-        BitMatrix bitMatrix = qrCodeWriter.encode(data, BarcodeFormat.QR_CODE,
+        BitMatrix bitMatrix = qrCodeWriter.encode(qrCodeUrl, BarcodeFormat.QR_CODE,
                 QR_CODE_WIDTH, QR_CODE_HEIGHT, hints);
         
         // Convert to image
@@ -96,13 +102,16 @@ public class QRCodeService {
         checkRateLimit(user);
         
         // Create encrypted data
-        String data = encryptData(user.getId() + ":" + user.getUsername() + ":" + System.currentTimeMillis());
+        String encryptedToken = encryptData(user.getId() + ":" + user.getUsername() + ":" + System.currentTimeMillis());
+        
+        // Create full URL with encrypted token
+        String qrCodeUrl = BASE_URL + "/attendance/qr/scan?token=" + encryptedToken;
         
         // Create QR code session
-        QRCodeSession session = new QRCodeSession(user, data);
+        QRCodeSession session = new QRCodeSession(user, encryptedToken);
         qrCodeSessionRepository.save(session);
         
-        return data;
+        return qrCodeUrl;
     }
 
     /**
@@ -225,10 +234,13 @@ public class QRCodeService {
         // Check rate limit
         checkRateLimit(user);
         
-        String data = encryptData(user.getId() + ":" + user.getUsername() + ":" + System.currentTimeMillis());
+        String encryptedToken = encryptData(user.getId() + ":" + user.getUsername() + ":" + System.currentTimeMillis());
+        
+        // Create full URL with encrypted token
+        String qrCodeUrl = BASE_URL + "/attendance/qr/scan?token=" + encryptedToken;
         
         // Create QR code session
-        QRCodeSession session = new QRCodeSession(user, data);
+        QRCodeSession session = new QRCodeSession(user, encryptedToken);
         qrCodeSessionRepository.save(session);
         
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
@@ -236,7 +248,7 @@ public class QRCodeService {
         hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
         hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
         
-        BitMatrix bitMatrix = qrCodeWriter.encode(data, BarcodeFormat.QR_CODE,
+        BitMatrix bitMatrix = qrCodeWriter.encode(qrCodeUrl, BarcodeFormat.QR_CODE,
                 QR_CODE_WIDTH, QR_CODE_HEIGHT, hints);
         
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();

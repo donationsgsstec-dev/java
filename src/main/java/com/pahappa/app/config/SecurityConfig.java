@@ -174,6 +174,8 @@ public class SecurityConfig {
                     "/register/save",      // Registration form submission
                     "/login",              // Login page
                     "/forgot-password",    // Forgot password page
+                    "/attendance/qr/scan", // Public QR code scan endpoint
+                    "/attendance/qr/room-scan", // Public room QR code scan endpoint
                     "/css/**",             // Static CSS files
                     "/js/**",              // Static JavaScript files
                     "/images/**",          // Static images
