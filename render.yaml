@@ -5,11 +5,10 @@ services:
   # Web Service - Spring Boot Application
   - type: web
     name: pahappa-attendance-system
-    runtime: java
+    env: docker
     region: oregon
     plan: free
-    buildCommand: ./mvnw clean package -DskipTests
-    startCommand: java -Dserver.port=$PORT -jar target/user-auth-app-1.0.0.war
+    dockerfilePath: ./Dockerfile
     healthCheckPath: /actuator/health
     envVars:
       - key: JAVA_TOOL_OPTIONS
