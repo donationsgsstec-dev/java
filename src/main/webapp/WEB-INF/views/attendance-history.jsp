@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+﻿<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.time.format.DateTimeFormatter" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -190,10 +190,10 @@
     <div class="container">
         <!-- Navigation Bar -->
         <nav class="navbar">
-            <div class="navbar-brand">📊 Attendance History</div>
+            <div class="navbar-brand">ðŸ“Š Attendance History</div>
             <div class="navbar-links">
-                <a href="${pageContext.request.contextPath}/home">🏠 Home</a>
-                <a href="${pageContext.request.contextPath}/attendance">📋 Attendance</a>
+                <a href="${pageContext.request.contextPath}/home">ðŸ  Home</a>
+                <a href="${pageContext.request.contextPath}/attendance">ðŸ“‹ Attendance</a>
                 <form action="${pageContext.request.contextPath}/logout" method="post" style="margin: 0;">
                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                     <button type="submit" class="btn" style="padding: 8px 16px; margin: 0; background-color: #e74c3c; color: white;">Logout</button>
@@ -268,5 +268,7 @@
             </c:choose>
         </div>
     </div>
+    <!-- Include Julia Chat Widget -->
+    <%@ include file="julia-chat-widget.jsp" %>
 </body>
 </html>

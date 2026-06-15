@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+﻿<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <!DOCTYPE html>
 <html>
@@ -182,7 +182,7 @@
                 <p class="mt-3">Processing...</p>
             </div>
 
-            <!-- Action Buttons — Room QR only -->
+            <!-- Action Buttons â€” Room QR only -->
             <div class="action-buttons">
                 <button class="btn-sign-in" id="roomScanBtn"
                         onclick="processRoomQR()" disabled
@@ -200,7 +200,7 @@
                 <ul>
                     <li>Allow camera access when prompted</li>
                     <li>Point your camera at the <strong>Check-In</strong> or <strong>Check-Out</strong> QR on the office screen</li>
-                    <li>Once detected, tap <strong>Submit Scan</strong> — the server knows which code it is</li>
+                    <li>Once detected, tap <strong>Submit Scan</strong> â€” the server knows which code it is</li>
                     <li>Check-Out is rejected if you haven't checked in today</li>
                 </ul>
             </div>
@@ -266,8 +266,8 @@
             .then(data => {
                 document.getElementById('loadingSpinner').style.display = 'none';
                 if (data.success) {
-                    const icon = data.action === 'CHECK_IN' ? '✅' : '👋';
-                    showMessage(icon + ' ' + data.message + ' — Redirecting…', 'success');
+                    const icon = data.action === 'CHECK_IN' ? 'âœ…' : 'ðŸ‘‹';
+                    showMessage(icon + ' ' + data.message + ' â€” Redirectingâ€¦', 'success');
                     setTimeout(() => window.location.href = '${pageContext.request.contextPath}/attendance/dashboard', 2000);
                 } else {
                     showMessage(data.message, 'error');
@@ -314,5 +314,7 @@
             }
         });
     </script>
+    <!-- Include Julia Chat Widget -->
+    <%@ include file="julia-chat-widget.jsp" %>
 </body>
 </html>

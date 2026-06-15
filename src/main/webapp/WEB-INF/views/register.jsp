@@ -265,6 +265,6 @@
     </div>
     
     <!-- Include Julia Chat Widget -->
-    <jsp:include page="julia-chat-widget.jsp" />
+    <%@ include file="julia-chat-widget.jsp" %>
 </body>
 </html>

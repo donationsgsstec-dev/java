@@ -78,6 +78,14 @@ public class AuthController {
     }
 
     /**
+     * Test page for Julia chat widget
+     */
+    @GetMapping("/test-widget")
+    public String testWidget() {
+        return "test-widget";
+    }
+
+    /**
      * Process the registration form submission.
      * 
      * This method handles POST requests to /register/save.

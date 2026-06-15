@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+﻿<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.time.format.DateTimeFormatter" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -262,12 +262,12 @@
     <div class="container">
         <!-- Navigation Bar -->
         <nav class="navbar">
-            <div class="navbar-brand">📋 Attendance System</div>
+            <div class="navbar-brand">ðŸ“‹ Attendance System</div>
             <div class="navbar-links">
-                <a href="${pageContext.request.contextPath}/home">🏠 Home</a>
-                <a href="${pageContext.request.contextPath}/attendance/history">📊 History</a>
+                <a href="${pageContext.request.contextPath}/home">ðŸ  Home</a>
+                <a href="${pageContext.request.contextPath}/attendance/history">ðŸ“Š History</a>
                 <c:if test="${user.admin}">
-                    <a href="${pageContext.request.contextPath}/attendance/admin">👥 Admin View</a>
+                    <a href="${pageContext.request.contextPath}/attendance/admin">ðŸ‘¥ Admin View</a>
                 </c:if>
                 <form action="${pageContext.request.contextPath}/logout" method="post" style="margin: 0;">
                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
@@ -291,7 +291,7 @@
             <c:choose>
                 <c:when test="${isSignedIn}">
                     <div class="status-indicator status-signed-in">
-                        ✓ Currently Signed In
+                        âœ“ Currently Signed In
                     </div>
                     <div class="time-display">
                         Signed in at: ${currentAttendance.signInTime.format(DateTimeFormatter.ofPattern("HH:mm:ss"))}
@@ -306,7 +306,7 @@
                 </c:when>
                 <c:otherwise>
                     <div class="status-indicator status-signed-out">
-                        ○ Not Signed In
+                        â—‹ Not Signed In
                     </div>
                     <p style="color: #666; margin: 20px 0;">
                         Click the button below to sign in for today.
@@ -392,5 +392,7 @@
             </c:choose>
         </div>
     </div>
+    <!-- Include Julia Chat Widget -->
+    <%@ include file="julia-chat-widget.jsp" %>
 </body>
 </html>

@@ -92,8 +92,9 @@ public class SecurityConfig {
 
             // URL authorization for admin paths
             .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/admin/login").permitAll()   // Admin login page is public
+                // Must be first: allow all internal JSP forwards and error dispatches
                 .dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.ERROR).permitAll()
+                .requestMatchers("/admin/login").permitAll()   // Admin login page is public
                 .anyRequest().hasAuthority("ADMIN")            // Everything else requires ADMIN
             )
 
@@ -168,12 +169,20 @@ public class SecurityConfig {
         http
             // Configure URL authorization
             .authorizeHttpRequests(authorize -> authorize
+                // Must be first: allow all internal JSP forwards and error dispatches
+                .dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.ERROR).permitAll()
                 // Public URLs - accessible without authentication
                 .requestMatchers(
                     "/register",           // Registration page
                     "/register/save",      // Registration form submission
                     "/login",              // Login page
                     "/forgot-password",    // Forgot password page
+                    "/test-widget",        // Test page for Julia widget
+                    "/julia-test",         // Public AI health-check page
+                    "/julia/chat",         // Julia AI chat proxy — public so widget works on all pages
+                    "/julia/diagnostics",  // Julia AI diagnostics page — public for troubleshooting
+                    "/julia/config",       // Julia AI config endpoint — public for diagnostics
+                    "/julia/health",       // Julia AI health check — public for diagnostics
                     "/attendance/qr/scan", // Public QR code scan endpoint
                     "/attendance/qr/room-scan", // Public room QR code scan endpoint
                     "/css/**",             // Static CSS files
@@ -192,11 +201,6 @@ public class SecurityConfig {
                     "/attendance/statistics",
                     "/attendance/calendar"
                 ).authenticated()
-                // Disable security for JSP forwards (internal forwards should not be secured)
-                .dispatcherTypeMatchers(
-                    DispatcherType.FORWARD,
-                    DispatcherType.ERROR
-                ).permitAll()
                 // All other URLs require authentication
                 .anyRequest().authenticated()
             )
@@ -224,8 +228,8 @@ public class SecurityConfig {
 
             // Configure CSRF protection
             .csrf(csrf -> csrf
-                // Disable CSRF for H2 console and QR endpoints (development only)
-                .ignoringRequestMatchers("/h2-console/**", "/attendance/qr/**")
+                // Disable CSRF for H2 console, QR endpoints, and Julia chat endpoints
+                .ignoringRequestMatchers("/h2-console/**", "/attendance/qr/**", "/julia/**")
             )
 
             // Configure session management

@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+﻿<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.time.format.DateTimeFormatter" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -252,10 +252,10 @@
 
         <!-- Navigation Bar -->
         <nav class="navbar">
-            <div class="navbar-brand">📊 Attendance Report</div>
+            <div class="navbar-brand">ðŸ“Š Attendance Report</div>
             <div class="navbar-links">
-                <a href="${pageContext.request.contextPath}/attendance/admin">👥 Dashboard</a>
-                <a href="${pageContext.request.contextPath}/attendance/admin/report">📊 Reports</a>
+                <a href="${pageContext.request.contextPath}/attendance/admin">ðŸ‘¥ Dashboard</a>
+                <a href="${pageContext.request.contextPath}/attendance/admin/report">ðŸ“Š Reports</a>
                 <form action="${pageContext.request.contextPath}/logout" method="post" style="margin: 0;">
                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                     <button type="submit" class="btn" style="padding: 8px 16px; margin: 0; background-color: #e74c3c; color: white;">Logout</button>
@@ -287,7 +287,7 @@
             </div>
             <div class="stat-card">
                 <h3>Date Range</h3>
-                <div class="stat-value" style="font-size: 18px; padding-top: 8px;">${startDate}<br>→ ${endDate}</div>
+                <div class="stat-value" style="font-size: 18px; padding-top: 8px;">${startDate}<br>â†’ ${endDate}</div>
             </div>
             <div class="stat-card">
                 <h3>Completed Sessions</h3>
@@ -313,9 +313,9 @@
         <div class="table-card">
             <div class="table-card-header">
                 <h2>All Records (${startDate} to ${endDate})</h2>
-                <!-- Export link — reuses the existing Excel export endpoint -->
+                <!-- Export link â€” reuses the existing Excel export endpoint -->
                 <a href="${pageContext.request.contextPath}/attendance/export?startDate=${startDate}&endDate=${endDate}"
-                   class="btn btn-success">⬇ Export to Excel</a>
+                   class="btn btn-success">â¬‡ Export to Excel</a>
             </div>
 
             <c:choose>
@@ -346,7 +346,7 @@
                                             <c:when test="${not empty record.signOutTime}">
                                                 ${record.signOutTime.format(DateTimeFormatter.ofPattern("HH:mm:ss"))}
                                             </c:when>
-                                            <c:otherwise>—</c:otherwise>
+                                            <c:otherwise>â€”</c:otherwise>
                                         </c:choose>
                                     </td>
                                     <td>${record.formattedDuration}</td>
@@ -372,5 +372,8 @@
         </div>
 
     </div>
+    <!-- Include Julia Chat Widget -->
+    <%@ include file="julia-chat-widget.jsp" %>
 </body>
 </html>
+

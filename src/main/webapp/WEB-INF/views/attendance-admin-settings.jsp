@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+﻿<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <!DOCTYPE html>
 <html>
@@ -323,7 +323,7 @@
                 </div>
             </c:if>
 
-            <!-- Interns — can be promoted -->
+            <!-- Interns â€” can be promoted -->
             <h5 class="mb-3" style="color:#4a5568;">
                 <i class="fas fa-user-graduate me-1"></i>Interns
                 <span class="badge bg-secondary ms-2">${interns.size()}</span>
@@ -367,7 +367,7 @@
                 </c:otherwise>
             </c:choose>
 
-            <!-- Admins — can be demoted (except current user) -->
+            <!-- Admins â€” can be demoted (except current user) -->
             <h5 class="mb-3" style="color:#4a5568;">
                 <i class="fas fa-user-tie me-1"></i>Admins
                 <span class="badge bg-primary ms-2">${admins.size()}</span>
@@ -464,5 +464,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Include Julia Chat Widget -->
+    <%@ include file="julia-chat-widget.jsp" %>
 </body>
 </html>

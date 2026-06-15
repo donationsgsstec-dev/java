@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+﻿<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <!DOCTYPE html>
@@ -184,17 +184,14 @@
 </head>
 <body>
     <div class="container">
-        <div style="text-align: center;">
-            <span class="admin-badge">🔐 Admin Access</span>
-        </div>
+        <div style="text-align: center;"><span class="admin-badge">&#128274; Admin Access</span></div>
         
-        <div class="admin-icon">👨‍💼</div>
+        <div class="admin-icon">&#128104;&#8205;&#128188;</div>
         
         <h2>Administrator Login</h2>
         <p class="subtitle">Restricted access for administrators only</p>
 
-        <div class="security-notice">
-            ⚠️ This area is restricted to authorized administrators only. All login attempts are logged.
+        <div class="security-notice">&#9888;&#65039; This area is restricted to authorized administrators only. All login attempts are logged.
         </div>
 
         <!-- Display error messages -->
@@ -244,19 +241,24 @@
 
             <!-- Submit Button -->
             <button type="submit" class="btn btn-admin">
-                🔓 Admin Sign In
+                &#128274; Admin Sign In
             </button>
             
             <!-- Security Note -->
             <div style="text-align: center; margin-top: 15px; font-size: 12px; color: #999;">
-                <i>🔒 Secure admin login with Spring Security</i>
+                <i>&#128274; Secure admin login with Spring Security</i>
             </div>
         </form>
 
         <!-- Back to Regular Login Link -->
         <div class="back-link">
-            <a href="${pageContext.request.contextPath}/login">← Back to Regular Login</a>
+            <a href="${pageContext.request.contextPath}/login">&#8592; Back to Regular Login</a>
         </div>
     </div>
+    <!-- Include Julia Chat Widget -->
+    <%@ include file="julia-chat-widget.jsp" %>
 </body>
 </html>
+
+
+

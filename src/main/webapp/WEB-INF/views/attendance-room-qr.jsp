@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+﻿<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <!DOCTYPE html>
 <html>
@@ -19,7 +19,7 @@
             backdrop-filter: blur(10px);
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
-        /* ── QR card ─────────────────────────────────────── */
+        /* â”€â”€ QR card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
         .qr-card {
             background: white;
             border-radius: 20px;
@@ -40,7 +40,7 @@
             border-radius: 12px;
             max-width: 100%;
         }
-        /* ── Countdown ───────────────────────────────────── */
+        /* â”€â”€ Countdown â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
         .countdown {
             font-size: 2rem;
             font-weight: 800;
@@ -48,10 +48,10 @@
         }
         .countdown.warning { color: #e67e22; }
         .countdown.danger  { color: #e74c3c; }
-        /* ── Badges ──────────────────────────────────────── */
+        /* â”€â”€ Badges â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
         .badge-active  { background: #28a745; color: white; }
         .badge-expired { background: #dc3545; color: white; }
-        /* ── Generate panel ──────────────────────────────── */
+        /* â”€â”€ Generate panel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
         .generate-card {
             background: white;
             border-radius: 20px;
@@ -121,7 +121,7 @@
         </c:if>
 
         <c:choose>
-            <%-- ══ At least one active session → show QR codes ══════════════ --%>
+            <%-- â•â• At least one active session â†’ show QR codes â•â•â•â•â•â•â•â•â•â•â•â•â•â• --%>
             <c:when test="${not empty checkInSession or not empty checkOutSession}">
 
                 <!-- Action row -->
@@ -168,7 +168,7 @@
                                             <i class="fas fa-download me-1"></i>Download Check-In QR
                                         </button>
                                     </div>
-                                    <div class="countdown mb-1" id="countdownIn">loading…</div>
+                                    <div class="countdown mb-1" id="countdownIn">loadingâ€¦</div>
                                     <p class="text-muted small mb-0">Expires at ${checkInSession.getFormattedExpiresAt()}</p>
                                 </c:when>
                                 <c:otherwise>
@@ -205,7 +205,7 @@
                                             <i class="fas fa-download me-1"></i>Download Check-Out QR
                                         </button>
                                     </div>
-                                    <div class="countdown mb-1" id="countdownOut">loading…</div>
+                                    <div class="countdown mb-1" id="countdownOut">loadingâ€¦</div>
                                     <p class="text-muted small mb-0">Expires at ${checkOutSession.getFormattedExpiresAt()}</p>
                                 </c:when>
                                 <c:otherwise>
@@ -293,7 +293,7 @@
 
             </c:when>
 
-            <%-- ══ No active sessions → generate panel ══════════════════════ --%>
+            <%-- â•â• No active sessions â†’ generate panel â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• --%>
             <c:otherwise>
                 <div class="generate-card">
                     <div style="font-size:80px;color:#ccc;margin-bottom:20px;">
@@ -326,7 +326,7 @@
             <div class="row">
                 <div class="col-md-6">
                     <ul style="color:#4a5568;line-height:2.2;">
-                        <li>Two codes are generated at once — <strong>Check-In</strong> and <strong>Check-Out</strong>.</li>
+                        <li>Two codes are generated at once â€” <strong>Check-In</strong> and <strong>Check-Out</strong>.</li>
                         <li>Display this screen on a monitor <strong>inside the office</strong>.</li>
                         <li>Interns scan the appropriate code on arrival and departure.</li>
                     </ul>
@@ -344,5 +344,8 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Include Julia Chat Widget -->
+    <%@ include file="julia-chat-widget.jsp" %>
 </body>
 </html>
+

@@ -84,6 +84,11 @@ public class HomeController {
         return "redirect:/home";
     }
 
+    @GetMapping("/julia-test")
+    public String juliaTest() {
+        return "julia-test";
+    }
+
     /**
      * Helper method to add GSS AI configuration to model.
      * This makes the configuration available to JSP pages.
