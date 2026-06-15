@@ -144,6 +144,16 @@ public interface UserService {
      * @throws RuntimeException if user not found
      */
     boolean sendPasswordResetEmail(String firstName, String username);
+
+    /**
+     * Reset admin password: generates a temporary password, saves it,
+     * and emails it to the admin's registered email address.
+     *
+     * @param username The admin's username
+     * @return true if successful
+     * @throws RuntimeException if user not found or not an admin
+     */
+    boolean resetAdminPassword(String username);
 }
 
 // Made with Bob

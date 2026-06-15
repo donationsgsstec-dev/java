@@ -95,6 +95,7 @@ public class SecurityConfig {
                 // Must be first: allow all internal JSP forwards and error dispatches
                 .dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.ERROR).permitAll()
                 .requestMatchers("/admin/login").permitAll()   // Admin login page is public
+                .requestMatchers("/admin/forgot-password").permitAll() // Admin password recovery is public
                 .anyRequest().hasAuthority("ADMIN")            // Everything else requires ADMIN
             )
 
@@ -177,6 +178,7 @@ public class SecurityConfig {
                     "/register/save",      // Registration form submission
                     "/login",              // Login page
                     "/forgot-password",    // Forgot password page
+                    "/admin/forgot-password", // Admin forgot password page
                     "/test-widget",        // Test page for Julia widget
                     "/julia-test",         // Public AI health-check page
                     "/julia/chat",         // Julia AI chat proxy — public so widget works on all pages

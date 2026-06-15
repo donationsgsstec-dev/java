@@ -222,11 +222,11 @@
     <div class="container">
         <!-- Navigation Bar -->
         <nav class="navbar">
-            <div class="navbar-brand">ðŸ‘¥ Admin Dashboard</div>
+<div class="navbar-brand">&#128101; Admin Dashboard</div>
             <div class="navbar-links">
-                <a href="${pageContext.request.contextPath}/attendance/admin/report">ðŸ“Š Reports</a>
-                <a href="${pageContext.request.contextPath}/attendance/admin/room-qr">ðŸ“º Room QR</a>
-                <a href="${pageContext.request.contextPath}/attendance/admin/settings">âš™ï¸ Settings</a>
+        <a href="${pageContext.request.contextPath}/attendance/admin/report">&#128202; Reports</a>
+        <a href="${pageContext.request.contextPath}/attendance/admin/room-qr">&#128250; Room QR</a>
+        <a href="${pageContext.request.contextPath}/attendance/admin/settings">&#9881;&#65039; Settings</a>
                 <form action="${pageContext.request.contextPath}/logout" method="post" style="margin: 0;">
                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                     <button type="submit" class="btn" style="padding: 8px 16px; margin: 0; background-color: #e74c3c; color: white;">Logout</button>

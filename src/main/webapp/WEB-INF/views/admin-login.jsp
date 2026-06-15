@@ -145,6 +145,24 @@
             background: linear-gradient(135deg, #ee5a6f 0%, #dd4a5f 100%);
         }
 
+        /* Forgot Password Link */
+        .forgot-link {
+            text-align: right;
+            margin-top: -10px;
+            margin-bottom: 20px;
+        }
+
+        .forgot-link a {
+            color: #ff6b6b;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .forgot-link a:hover {
+            text-decoration: underline;
+        }
+
         /* Link Styles */
         .back-link {
             text-align: center;
@@ -208,6 +226,13 @@
             </div>
         </c:if>
 
+        <!-- Display password reset success message -->
+        <c:if test="${param.passwordReset != null}">
+            <div class="alert alert-success">
+                Password recovery email has been sent! Please check your inbox.
+            </div>
+        </c:if>
+
         <!-- Admin Login Form with Spring Security CSRF Protection -->
         <form action="${pageContext.request.contextPath}/admin/login" method="post" class="login-form">
             
@@ -230,6 +255,11 @@
                        name="password" 
                        placeholder="Enter admin password"
                        required />
+            </div>
+
+            <!-- Forgot Password Link -->
+            <div class="forgot-link">
+                <a href="${pageContext.request.contextPath}/admin/forgot-password">Forgot Password?</a>
             </div>
 
             <!-- CSRF Token (required by Spring Security for POST requests) -->

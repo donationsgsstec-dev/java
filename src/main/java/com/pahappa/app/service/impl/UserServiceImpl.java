@@ -251,23 +251,24 @@ public class UserServiceImpl implements UserService {
 
     /**
      * Send password reset email to user.
-     * Note: This sends the actual password, not a reset link.
-     * In production, consider implementing a secure password reset token system.
+     * Note: This sends account recovery info, not the actual hashed password.
      */
     @Override
     public boolean sendPasswordResetEmail(String firstName, String username) {
-        // Find user by first name and username
         User user = userRepository.findByFirstNameAndUsername(firstName, username)
                 .orElseThrow(() -> new RuntimeException("No user found with the provided first name and username"));
 
+        // Generate a temp password and reset for regular users too
+        String tempPassword = generateTempPassword();
+        user.setPassword(passwordEncoder.encode(tempPassword));
+        userRepository.save(user);
+
         try {
-            // Send password reset email
-            boolean emailSent = emailService.sendPasswordResetEmail(
+            boolean emailSent = emailService.sendAdminPasswordResetEmail(
                 user.getEmail(),
                 user.getUsername(),
-                user.getFirstName()
+                tempPassword
             );
-            
             if (emailSent) {
                 System.out.println("Password reset email sent to: " + user.getEmail());
                 return true;
@@ -279,6 +280,38 @@ public class UserServiceImpl implements UserService {
             System.err.println("Error sending password reset email: " + e.getMessage());
             throw new RuntimeException("Failed to send password reset email: " + e.getMessage());
         }
+    }
+
+    /**
+     * Reset admin password: generates a temp password, saves BCrypt hash, emails plain text to admin.
+     */
+    @Override
+    public boolean resetAdminPassword(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("No account found with username: " + username));
+
+        if (user.getRole() == null || !user.getRole().name().equals("ADMIN")) {
+            throw new RuntimeException("Account is not an admin account.");
+        }
+
+        String tempPassword = generateTempPassword();
+        user.setPassword(passwordEncoder.encode(tempPassword));
+        userRepository.save(user);
+
+        return emailService.sendAdminPasswordResetEmail(user.getEmail(), user.getUsername(), tempPassword);
+    }
+
+    /**
+     * Generates a secure 10-character temporary password.
+     */
+    private String generateTempPassword() {
+        String chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789@#$!";
+        java.util.Random random = new java.security.SecureRandom();
+        StringBuilder sb = new StringBuilder(10);
+        for (int i = 0; i < 10; i++) {
+            sb.append(chars.charAt(random.nextInt(chars.length())));
+        }
+        return sb.toString();
     }
 }
 

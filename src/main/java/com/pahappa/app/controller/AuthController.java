@@ -208,6 +208,44 @@ public class AuthController {
     }
 
     /**
+     * Display the admin forgot password form.
+     */
+    @GetMapping("/admin/forgot-password")
+    public String showAdminForgotPasswordForm(Model model) {
+        return "admin-forgot-password";
+    }
+
+    /**
+     * Process the admin forgot password form.
+     * Looks up the admin by username and emails their password recovery info.
+     */
+    @PostMapping("/admin/forgot-password")
+    public String processAdminForgotPassword(@RequestParam("username") String username,
+                                             Model model) {
+        if (username == null || username.trim().isEmpty()) {
+            model.addAttribute("errorMessage", "Username is required.");
+            return "admin-forgot-password";
+        }
+
+        try {
+            boolean sent = userService.resetAdminPassword(username.trim());
+            if (sent) {
+                return "redirect:/admin/login?passwordReset=true";
+            } else {
+                model.addAttribute("errorMessage", "Failed to send password reset email. Please try again.");
+                return "admin-forgot-password";
+            }
+        } catch (RuntimeException e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            return "admin-forgot-password";
+        } catch (Exception e) {
+            System.err.println("Admin password reset error: " + e.getMessage());
+            model.addAttribute("errorMessage", "An error occurred. Please try again.");
+            return "admin-forgot-password";
+        }
+    }
+
+    /**
      * Display the forgot password form.
      *
      * This method handles GET requests to /forgot-password.

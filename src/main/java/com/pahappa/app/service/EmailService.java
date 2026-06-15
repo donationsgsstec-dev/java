@@ -108,14 +108,13 @@ public interface EmailService {
     boolean sendRoomQRNotification(String expiresAt, String label);
 
     /**
-     * Send password reset email to user with their account information.
-     * Note: This implementation sends account recovery information.
-     * In production, consider implementing a secure password reset token system.
+     * Send admin password reset email with a new temporary password.
+     * Generates a temporary password, saves it, and emails it to the admin.
      *
-     * @param toEmail The recipient's email address
-     * @param username The user's username
-     * @param firstName The user's first name
+     * @param toEmail  The admin's email address
+     * @param username The admin's username
+     * @param tempPassword The generated temporary password (plain text)
      * @return true if email was sent successfully, false otherwise
      */
-    boolean sendPasswordResetEmail(String toEmail, String username, String firstName);
+    boolean sendAdminPasswordResetEmail(String toEmail, String username, String tempPassword);
 }

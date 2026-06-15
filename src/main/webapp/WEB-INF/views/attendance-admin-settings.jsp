@@ -323,7 +323,7 @@
                 </div>
             </c:if>
 
-            <!-- Interns â€” can be promoted -->
+            <!-- Interns - can be promoted -->
             <h5 class="mb-3" style="color:#4a5568;">
                 <i class="fas fa-user-graduate me-1"></i>Interns
                 <span class="badge bg-secondary ms-2">${interns.size()}</span>
@@ -367,7 +367,7 @@
                 </c:otherwise>
             </c:choose>
 
-            <!-- Admins â€” can be demoted (except current user) -->
+            <!-- Admins - can be demoted (except current user) -->
             <h5 class="mb-3" style="color:#4a5568;">
                 <i class="fas fa-user-tie me-1"></i>Admins
                 <span class="badge bg-primary ms-2">${admins.size()}</span>

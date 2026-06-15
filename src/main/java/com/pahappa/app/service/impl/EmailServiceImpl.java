@@ -578,68 +578,62 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
-    public boolean sendPasswordResetEmail(String toEmail, String username, String firstName) {
+    public boolean sendAdminPasswordResetEmail(String toEmail, String username, String tempPassword) {
         if (!emailEnabled) {
-            System.out.println("Email sending is disabled. Skipping password reset email.");
+            System.out.println("Email sending is disabled. Skipping admin password reset email.");
             return false;
         }
-        
-        String subject = "Password Recovery - Pahappa Attendance System";
-        String htmlContent = buildPasswordResetEmailHtml(username, firstName);
-        
+
+        String subject = "Admin Password Reset - Pahappa Attendance System";
+        String htmlContent = buildAdminPasswordResetEmailHtml(username, tempPassword);
+
         return sendEmail(toEmail, subject, htmlContent);
     }
 
-    private String buildPasswordResetEmailHtml(String username, String firstName) {
+    private String buildAdminPasswordResetEmailHtml(String username, String tempPassword) {
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         return String.format(
             "<!DOCTYPE html>" +
             "<html><head><style>" +
             "body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; }" +
             ".container { max-width: 600px; margin: 0 auto; padding: 20px; }" +
-            ".header { background: linear-gradient(135deg, #667eea 0%%, #764ba2 100%%); color: white; padding: 30px 20px; text-align: center; border-radius: 10px 10px 0 0; }" +
+            ".header { background: linear-gradient(135deg, #1e3c72 0%%, #2a5298 100%%); color: white; padding: 30px 20px; text-align: center; border-radius: 10px 10px 0 0; }" +
             ".header h1 { margin: 0; font-size: 24px; }" +
             ".content { padding: 25px; background-color: #f9f9f9; }" +
-            ".info-box { background-color: #e8eaf6; padding: 15px 20px; border-left: 4px solid #667eea; border-radius: 4px; margin: 15px 0; }" +
+            ".info-box { background-color: #e8eaf6; padding: 15px 20px; border-left: 4px solid #1e3c72; border-radius: 4px; margin: 15px 0; }" +
             ".info-box p { margin: 6px 0; }" +
-            ".warning { background-color: #fff3e0; padding: 12px 16px; border-left: 4px solid #FF9800; border-radius: 4px; font-size: 14px; margin-top: 15px; }" +
-            ".cta { text-align: center; margin: 25px 0; }" +
-            ".cta a { background: linear-gradient(135deg, #667eea 0%%, #764ba2 100%%); color: white; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 16px; display: inline-block; }" +
+            ".password-box { background-color: #fff3e0; border: 2px dashed #ff6b6b; border-radius: 8px; padding: 20px; text-align: center; margin: 20px 0; }" +
+            ".password-box .label { font-size: 13px; color: #666; margin-bottom: 8px; }" +
+            ".password-box .password { font-size: 26px; font-weight: bold; letter-spacing: 4px; color: #1e3c72; font-family: monospace; }" +
+            ".warning { background-color: #ffebee; padding: 12px 16px; border-left: 4px solid #f44336; border-radius: 4px; font-size: 13px; margin-top: 15px; }" +
             ".footer { text-align: center; padding: 15px; font-size: 12px; color: #666; border-top: 1px solid #eee; }" +
-            ".security-note { background-color: #ffebee; padding: 12px 16px; border-left: 4px solid #f44336; border-radius: 4px; font-size: 13px; margin-top: 15px; }" +
             "</style></head><body>" +
             "<div class='container'>" +
-            "<div class='header'>" +
-            "<h1>🔐 Password Recovery Request</h1>" +
-            "</div>" +
+            "<div class='header'><h1>&#128272; Admin Password Reset</h1></div>" +
             "<div class='content'>" +
             "<h2>Hello %s!</h2>" +
-            "<p>We received a request to recover your password for the Pahappa Attendance System.</p>" +
+            "<p>A password reset was requested for your admin account. Your temporary password is shown below.</p>" +
             "<div class='info-box'>" +
-            "<p><strong>👤 Username:</strong> %s</p>" +
-            "<p><strong>🕐 Request Time:</strong> %s</p>" +
+            "<p><strong>&#128100; Username:</strong> %s</p>" +
+            "<p><strong>&#128336; Reset Time:</strong> %s</p>" +
             "</div>" +
-            "<p><strong>Important:</strong> Your account credentials have been verified. Please use your existing password to log in.</p>" +
+            "<div class='password-box'>" +
+            "<div class='label'>Your Temporary Password</div>" +
+            "<div class='password'>%s</div>" +
+            "</div>" +
+            "<p><strong>Next steps:</strong></p>" +
+            "<ol>" +
+            "<li>Log in at <strong>/admin/login</strong> using the temporary password above.</li>" +
+            "<li>Go to your profile settings and change it to a strong, personal password immediately.</li>" +
+            "</ol>" +
             "<div class='warning'>" +
-            "⚠️ <strong>Security Notice:</strong> If you did not request this password recovery, please contact your administrator immediately. Someone may be trying to access your account." +
+            "&#128683; <strong>Security Warning:</strong> If you did not request this reset, your account may be at risk. " +
+            "Contact your system administrator immediately. This temporary password expires after your first login." +
             "</div>" +
-            "<div class='cta'>" +
-            "<a href='#'>Login to Your Account</a>" +
-            "</div>" +
-            "<div class='security-note'>" +
-            "🔒 <strong>Password Security Tips:</strong><br>" +
-            "• Never share your password with anyone<br>" +
-            "• Use a strong, unique password<br>" +
-            "• Change your password regularly<br>" +
-            "• Enable two-factor authentication if available" +
-            "</div>" +
-            "<p style='margin-top: 20px; font-size: 13px; color: #666;'>" +
-            "If you're having trouble logging in, please contact your system administrator for assistance." +
-            "</p>" +
             "</div>" +
             "<div class='footer'><p>&copy; 2026 Pahappa Attendance System. All rights reserved.</p></div>" +
             "</div></body></html>",
-            firstName, username, timestamp
+            username, username, timestamp, tempPassword
         );
     }
 }
